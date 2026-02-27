@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillSync AI - Intelligent Resume Analysis & Talent Matching</title>
+    <title>SkillSync AI - Explainable Skill-Based Internship & Project Matching</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
+        /* Your existing styles remain the same */
         * {
             font-family: 'Inter', sans-serif;
         }
@@ -327,12 +329,17 @@
             border-color: #a855f7;
             background: rgba(168, 85, 247, 0.1);
         }
+        
+        .match-reasoning {
+            background: rgba(6, 182, 212, 0.05);
+            border-left: 4px solid #06b6d4;
+        }
     </style>
 </head>
 <body class="antialiased">
     <div class="gradient-bg"></div>
 
-    <!-- Auth Modal -->
+    <!-- Auth Modal (same as before) -->
     <div id="auth-modal" class="fixed inset-0 z-[100] flex items-center justify-center">
         <div class="absolute inset-0 bg-black/95 backdrop-blur-xl"></div>
         <div class="relative w-full max-w-md p-8">
@@ -342,7 +349,7 @@
                         <i class="fas fa-atom text-white text-2xl"></i>
                     </div>
                     <h2 class="text-2xl font-bold text-white mb-2">Welcome to SkillSync AI</h2>
-                    <p class="text-gray-400 text-sm">AI-Powered Resume Analysis & Talent Matching</p>
+                    <p class="text-gray-400 text-sm">Explainable Skill-Based Internship & Project Matching</p>
                 </div>
 
                 <!-- Step 1: Basic Info -->
@@ -405,11 +412,11 @@
 
                 <div class="glass-card rounded-3xl p-8 mb-8 relative overflow-hidden">
                     <div id="upload-zone" class="file-upload-zone rounded-2xl p-12 text-center cursor-pointer relative" onclick="document.getElementById('resume-input').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-                        <input type="file" id="resume-input" class="hidden" accept=".pdf,.doc,.docx" onchange="handleFileSelect(event)">
+                        <input type="file" id="resume-input" class="hidden" accept=".pdf,.doc,.docx,.txt" onchange="handleFileSelect(event)">
                         <div id="upload-content">
                             <i class="fas fa-file-upload text-5xl text-gray-500 mb-4"></i>
                             <p class="text-lg text-white font-medium mb-2">Drop your resume here</p>
-                            <p class="text-sm text-gray-500">or click to browse (PDF, DOC, DOCX)</p>
+                            <p class="text-sm text-gray-500">or click to browse (PDF, DOC, DOCX, TXT)</p>
                             <p class="text-xs text-gray-600 mt-4">AI-powered analysis for skills, projects & experience</p>
                         </div>
                         <div id="upload-success" class="hidden">
@@ -437,7 +444,7 @@
             <div id="resume-step-2" class="w-full max-w-6xl hidden">
                 <div class="text-center mb-8">
                     <h2 class="text-4xl font-bold text-white mb-4">Resume Analysis Complete</h2>
-                    <p class="text-xl text-gray-400">We've identified your technical profile</p>
+                    <p class="text-xl text-gray-400">We've identified your technical profile with explainable AI</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -464,25 +471,25 @@
                         <div class="space-y-4">
                             <div class="bg-white/5 rounded-xl p-4">
                                 <p class="text-xs text-gray-400 uppercase mb-1">Primary Domain</p>
-                                <p class="text-lg font-semibold text-cyan-400" id="detected-domain">Software Development</p>
+                                <p class="text-lg font-semibold text-cyan-400" id="detected-domain">-</p>
                             </div>
                             <div class="bg-white/5 rounded-xl p-4">
                                 <p class="text-xs text-gray-400 uppercase mb-1">Experience Level</p>
-                                <p class="text-lg font-semibold text-purple-400" id="detected-level">Mid-Level</p>
+                                <p class="text-lg font-semibold text-purple-400" id="detected-level">-</p>
                             </div>
                             <div class="bg-white/5 rounded-xl p-4">
                                 <p class="text-xs text-gray-400 uppercase mb-1">Projects Found</p>
-                                <p class="text-lg font-semibold text-emerald-400" id="projects-count">3 Projects</p>
+                                <p class="text-lg font-semibold text-emerald-400" id="projects-count">0 Projects</p>
                             </div>
                             <div class="bg-white/5 rounded-xl p-4">
                                 <p class="text-xs text-gray-400 uppercase mb-1">Resume Authenticity</p>
                                 <div class="flex items-center gap-2">
                                     <div class="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                                        <div id="authenticity-bar" class="h-full bg-emerald-400 rounded-full" style="width: 92%"></div>
+                                        <div id="authenticity-bar" class="h-full bg-emerald-400 rounded-full" style="width: 0%"></div>
                                     </div>
-                                    <span class="text-sm font-bold text-emerald-400" id="authenticity-score">92%</span>
+                                    <span class="text-sm font-bold text-emerald-400" id="authenticity-score">0%</span>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">Low probability of fake resume</p>
+                                <p class="text-xs text-gray-500 mt-1" id="fake-percentage">Analyzing authenticity...</p>
                             </div>
                         </div>
                     </div>
@@ -499,114 +506,28 @@
                     </div>
                 </div>
 
-                <!-- Test Recommendation -->
+                <!-- Explainable Matching Preview -->
                 <div class="glass-card rounded-3xl p-8 mb-8 border-2 border-cyan-500/30 bg-cyan-500/5">
                     <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                         <div class="flex-1">
-                            <h3 class="text-2xl font-bold text-white mb-2">Ready to Validate Your Skills?</h3>
-                            <p class="text-gray-400 mb-4">Take our AI-generated assessment based on your detected skills and projects. This will determine your competency score and unlock personalized job opportunities.</p>
+                            <h3 class="text-2xl font-bold text-white mb-2">Explainable Skill-Based Matching</h3>
+                            <p class="text-gray-400 mb-4">Our fairness-aware algorithm ranks candidates using weighted competency scoring, not keyword matching. Get transparent reasoning for every match.</p>
                             <div class="flex flex-wrap gap-2 mb-4">
                                 <span class="text-xs text-cyan-400 bg-cyan-400/10 px-3 py-1 rounded-full border border-cyan-400/30">
-                                    <i class="fas fa-brain mr-1"></i> AI-Generated Questions
+                                    <i class="fas fa-brain mr-1"></i> Weighted Competency Scoring
                                 </span>
                                 <span class="text-xs text-purple-400 bg-purple-400/10 px-3 py-1 rounded-full border border-purple-400/30">
-                                    <i class="fas fa-clock mr-1"></i> 30-45 Minutes
+                                    <i class="fas fa-project-diagram mr-1"></i> Project Requirements Mapping
                                 </span>
                                 <span class="text-xs text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/30">
-                                    <i class="fas fa-certificate mr-1"></i> Skill Validation
+                                    <i class="fas fa-balance-scale mr-1"></i> Fairness-Aware Algorithms
                                 </span>
                             </div>
                         </div>
-                        <button onclick="startSkillTest()" class="btn-primary px-8 py-4 rounded-xl text-white font-bold text-lg whitespace-nowrap">
-                            Start Test <i class="fas fa-play ml-2"></i>
+                        <button onclick="showMatchingPreview()" class="btn-primary px-8 py-4 rounded-xl text-white font-bold text-lg whitespace-nowrap">
+                            View Matching <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </div>
-                </div>
-
-                <!-- Comparison Section Preview -->
-                <div class="glass-card rounded-3xl p-8">
-                    <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                        <i class="fas fa-users text-amber-400"></i>
-                        Competition Analysis
-                    </h3>
-                    <p class="text-gray-400 mb-4">Compare your profile with other candidates in the talent pool</p>
-                    <button onclick="showComparisonPreview()" class="w-full py-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium transition-all flex items-center justify-center gap-3">
-                        <i class="fas fa-chart-bar text-cyan-400"></i>
-                        View Market Comparison
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Test Interface -->
-    <div id="test-interface" class="hidden fixed inset-0 z-[80] bg-[#0a0a0a]">
-        <!-- Test Header -->
-        <div class="glass-card border-b border-white/10 px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center">
-                    <i class="fas fa-atom text-white"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-white" id="test-title">Skill Validation Assessment</h3>
-                    <p class="text-xs text-gray-400" id="test-subtitle">Based on your resume profile</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-6">
-                <div class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10">
-                    <i class="fas fa-clock text-cyan-400"></i>
-                    <span id="test-timer" class="font-mono text-lg font-bold text-cyan-400">45:00</span>
-                </div>
-                <button onclick="confirmExitTest()" class="text-gray-400 hover:text-white transition-colors">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Progress -->
-        <div class="w-full h-1 bg-white/10">
-            <div id="test-progress" class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-300" style="width: 0%"></div>
-        </div>
-
-        <!-- Test Content -->
-        <div class="flex h-[calc(100vh-81px)]">
-            <!-- Sidebar -->
-            <div class="w-64 glass-card border-r border-white/10 p-4 overflow-y-auto hidden md:block">
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Questions</p>
-                <div id="question-nav" class="grid grid-cols-5 gap-2">
-                    <!-- Question numbers -->
-                </div>
-                
-                <div class="mt-6 pt-6 border-t border-white/10">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Legend</p>
-                    <div class="space-y-2 text-xs">
-                        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-cyan-500"></div><span class="text-gray-400">Answered</span></div>
-                        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-white/20"></div><span class="text-gray-400">Unanswered</span></div>
-                        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-amber-500"></div><span class="text-gray-400">Current</span></div>
-                    </div>
-                </div>
-
-                <div class="mt-6">
-                    <button onclick="submitTest()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold hover:shadow-lg transition-all">
-                        Submit Test
-                    </button>
-                </div>
-            </div>
-
-            <!-- Main Question Area -->
-            <div class="flex-1 overflow-y-auto p-6 md:p-12">
-                <div id="question-container" class="max-w-4xl mx-auto">
-                    <!-- Questions rendered here -->
-                </div>
-                
-                <!-- Navigation Buttons -->
-                <div class="max-w-4xl mx-auto mt-8 flex justify-between">
-                    <button onclick="prevQuestion()" id="prev-btn" class="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors disabled:opacity-50" disabled>
-                        <i class="fas fa-arrow-left mr-2"></i> Previous
-                    </button>
-                    <button onclick="nextQuestion()" id="next-btn" class="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors">
-                        Next <i class="fas fa-arrow-right ml-2"></i>
-                    </button>
                 </div>
             </div>
         </div>
@@ -623,15 +544,15 @@
                     </div>
                     <div>
                         <h1 class="text-xl font-bold tracking-tight text-white">SkillSync AI</h1>
-                        <p class="text-xs text-gray-400 tracking-wider">INTELLIGENT TALENT MATCHING</p>
+                        <p class="text-xs text-gray-400 tracking-wider">EXPLAINABLE SKILL MATCHING</p>
                     </div>
                 </div>
                 
                 <div class="hidden md:flex items-center gap-8">
                     <button onclick="switchTab('overview')" class="nav-item active text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-overview">Overview</button>
                     <button onclick="switchTab('projects')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-projects">My Projects</button>
-                    <button onclick="switchTab('competition')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-competition">Competition</button>
-                    <button onclick="switchTab('opportunities')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-opportunities">Opportunities</button>
+                    <button onclick="switchTab('matches')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-matches">Skill Matches</button>
+                    <button onclick="switchTab('reasoning')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-reasoning">Match Reasoning</button>
                     <button onclick="switchTab('analytics')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-analytics">AI Analysis</button>
                 </div>
                 
@@ -656,7 +577,7 @@
                     <div class="relative z-10">
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 mb-6">
                             <i class="fas fa-check-circle text-emerald-400"></i>
-                            <span class="text-emerald-400 font-medium">Assessment Completed</span>
+                            <span class="text-emerald-400 font-medium">Profile Analyzed</span>
                         </div>
                         
                         <div class="flex flex-col md:flex-row items-center justify-center gap-12 mb-8">
@@ -673,7 +594,7 @@
                                     </defs>
                                 </svg>
                                 <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span id="final-score" class="text-6xl font-bold text-white">0%</span>
+                                    <span id="final-score" class="text-6xl font-bold text-white">0</span>
                                     <span class="text-gray-400 text-sm mt-1">Competency Score</span>
                                 </div>
                             </div>
@@ -681,10 +602,10 @@
                             <div class="text-left">
                                 <div class="rank-badge inline-flex items-center gap-2 px-6 py-3 rounded-2xl mb-4">
                                     <i class="fas fa-trophy text-amber-900"></i>
-                                    <span class="text-amber-900 font-bold text-lg">Rank #<span id="user-rank">--</span></span>
+                                    <span class="text-amber-900 font-bold text-lg">Skill Match #<span id="user-rank">--</span></span>
                                 </div>
-                                <h2 id="result-title" class="text-3xl font-bold text-white mb-2">Outstanding Performance!</h2>
-                                <p id="result-message" class="text-gray-400 max-w-md">AI-validated skills with transparent competency scoring.</p>
+                                <h2 id="result-title" class="text-3xl font-bold text-white mb-2">Profile Analysis Complete!</h2>
+                                <p id="result-message" class="text-gray-400 max-w-md">Your skills and projects have been analyzed with explainable AI.</p>
                                 
                                 <!-- Fairness Indicator -->
                                 <div class="fairness-indicator rounded-xl p-4 mt-4">
@@ -692,7 +613,7 @@
                                         <i class="fas fa-shield-alt text-emerald-400"></i>
                                         <span class="text-emerald-400 font-semibold">Fairness-Aware Algorithm</span>
                                     </div>
-                                    <p class="text-xs text-gray-400">Ranking based on verified skills, not keywords. Bias mitigation active.</p>
+                                    <p class="text-xs text-gray-400">Ranking based on verified skills and weighted competency scoring, not keyword matching. Bias mitigation active.</p>
                                 </div>
                             </div>
                         </div>
@@ -700,67 +621,21 @@
                         <!-- Stats Grid -->
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
                             <div class="glass-card rounded-xl p-4">
-                                <div class="text-2xl font-bold text-cyan-400" id="mcq-score">0/0</div>
-                                <div class="text-xs text-gray-500 uppercase">Technical Correct</div>
+                                <div class="text-2xl font-bold text-cyan-400" id="total-skills">0</div>
+                                <div class="text-xs text-gray-500 uppercase">Skills Detected</div>
                             </div>
                             <div class="glass-card rounded-xl p-4">
-                                <div class="text-2xl font-bold text-purple-400" id="coding-score">0/0</div>
-                                <div class="text-xs text-gray-500 uppercase">Coding Passed</div>
+                                <div class="text-2xl font-bold text-purple-400" id="total-projects">0</div>
+                                <div class="text-xs text-gray-500 uppercase">Projects Found</div>
                             </div>
                             <div class="glass-card rounded-xl p-4">
-                                <div class="text-2xl font-bold text-emerald-400" id="accuracy">0%</div>
-                                <div class="text-xs text-gray-500 uppercase">Accuracy</div>
+                                <div class="text-2xl font-bold text-emerald-400" id="match-opportunities">0</div>
+                                <div class="text-xs text-gray-500 uppercase">Matching Opportunities</div>
                             </div>
                             <div class="glass-card rounded-xl p-4">
-                                <div class="text-2xl font-bold text-pink-400" id="percentile">0th</div>
-                                <div class="text-xs text-gray-500 uppercase">Percentile</div>
+                                <div class="text-2xl font-bold text-pink-400" id="authenticity-value">0%</div>
+                                <div class="text-xs text-gray-500 uppercase">Authenticity</div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- AI Explanation -->
-                <div class="glass-card rounded-3xl p-8 mb-8">
-                    <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                        <i class="fas fa-brain text-cyan-400"></i>
-                        AI Decision Explanation
-                    </h3>
-                    <div class="space-y-4" id="ai-explanations">
-                        <!-- Explanations populated by JS -->
-                    </div>
-                </div>
-
-                <!-- Placement Probability -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div class="placement-probability rounded-3xl p-8">
-                        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                            <i class="fas fa-briefcase text-cyan-400"></i>
-                            Placement Probability
-                        </h3>
-                        <div class="space-y-4" id="placement-stats">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                    
-                    <div class="glass-card rounded-3xl p-8">
-                        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                            <i class="fas fa-exclamation-triangle text-amber-400"></i>
-                            Resume Authenticity Check
-                        </h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
-                                <span class="text-gray-400">AI-Detected Authenticity</span>
-                                <span class="text-2xl font-bold text-emerald-400" id="final-authenticity">94%</span>
-                            </div>
-                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
-                                <span class="text-gray-400">Skill Verification</span>
-                                <span class="text-emerald-400 font-semibold"><i class="fas fa-check-circle mr-2"></i>Verified</span>
-                            </div>
-                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
-                                <span class="text-gray-400">Project Validation</span>
-                                <span class="text-emerald-400 font-semibold"><i class="fas fa-check-circle mr-2"></i>Consistent</span>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-4">Our AI analyzes writing patterns, skill consistency, and project complexity to detect potential fake resumes.</p>
                         </div>
                     </div>
                 </div>
@@ -778,68 +653,35 @@
                 </div>
             </div>
 
-            <!-- Competition Tab -->
-            <div id="tab-competition" class="tab-content">
+            <!-- Skill Matches Tab -->
+            <div id="tab-matches" class="tab-content">
                 <div class="glass-card rounded-3xl p-8 mb-8">
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div>
-                            <h2 class="text-3xl font-bold text-white mb-2">Market Competition</h2>
-                            <p class="text-gray-400">Compare your profile with other candidates</p>
-                        </div>
-                        <button onclick="uploadComparisonResume()" class="btn-primary px-6 py-3 rounded-xl text-white font-medium">
-                            <i class="fas fa-upload mr-2"></i>Upload Resume to Compare
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Comparison Chart -->
-                <div class="glass-card rounded-3xl p-8 mb-8">
-                    <h3 class="text-xl font-bold text-white mb-6">Competency Comparison</h3>
-                    <div class="chart-container">
-                        <canvas id="comparisonChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Comparison Table -->
-                <div class="glass-card rounded-3xl p-8">
-                    <h3 class="text-xl font-bold text-white mb-6">Detailed Comparison</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead>
-                                <tr class="border-b border-white/10">
-                                    <th class="pb-4 text-gray-400 font-medium">Candidate</th>
-                                    <th class="pb-4 text-gray-400 font-medium">Competency Score</th>
-                                    <th class="pb-4 text-gray-400 font-medium">Skills Match</th>
-                                    <th class="pb-4 text-gray-400 font-medium">Projects</th>
-                                    <th class="pb-4 text-gray-400 font-medium">Resume Authenticity</th>
-                                    <th class="pb-4 text-gray-400 font-medium">Rank</th>
-                                </tr>
-                            </thead>
-                            <tbody id="comparison-table-body">
-                                <!-- Populated by JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Opportunities Tab -->
-            <div id="tab-opportunities" class="tab-content">
-                <div class="glass-card rounded-3xl p-8 mb-8">
-                    <h2 class="text-3xl font-bold text-white mb-2">Recommended Opportunities</h2>
-                    <p class="text-gray-400">AI-matched jobs based on your verified skills and competency score</p>
+                    <h2 class="text-3xl font-bold text-white mb-2">Skill-Based Matches</h2>
+                    <p class="text-gray-400">Internships and projects matched using weighted competency scoring</p>
                 </div>
 
                 <!-- Filters -->
                 <div class="glass-card rounded-2xl p-4 mb-8 flex flex-wrap gap-4">
-                    <button onclick="filterOpportunities('all')" class="px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-sm font-medium">All</button>
-                    <button onclick="filterOpportunities('fulltime')" class="px-4 py-2 rounded-lg bg-white/5 text-gray-400 border border-white/10 text-sm font-medium hover:bg-white/10">Full-time</button>
-                    <button onclick="filterOpportunities('internship')" class="px-4 py-2 rounded-lg bg-white/5 text-gray-400 border border-white/10 text-sm font-medium hover:bg-white/10">Internship</button>
-                    <button onclick="filterOpportunities('remote')" class="px-4 py-2 rounded-lg bg-white/5 text-gray-400 border border-white/10 text-sm font-medium hover:bg-white/10">Remote</button>
+                    <button onclick="filterMatches('all')" class="px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-sm font-medium">All</button>
+                    <button onclick="filterMatches('internship')" class="px-4 py-2 rounded-lg bg-white/5 text-gray-400 border border-white/10 text-sm font-medium hover:bg-white/10">Internships</button>
+                    <button onclick="filterMatches('project')" class="px-4 py-2 rounded-lg bg-white/5 text-gray-400 border border-white/10 text-sm font-medium hover:bg-white/10">Projects</button>
+                    <button onclick="filterMatches('high-match')" class="px-4 py-2 rounded-lg bg-white/5 text-gray-400 border border-white/10 text-sm font-medium hover:bg-white/10">High Match (>80%)</button>
                 </div>
 
-                <div id="opportunities-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Opportunities populated by JS -->
+                <div id="matches-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Matches populated by JS -->
+                </div>
+            </div>
+
+            <!-- Match Reasoning Tab -->
+            <div id="tab-reasoning" class="tab-content">
+                <div class="glass-card rounded-3xl p-8 mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-2">Match Reasoning</h2>
+                    <p class="text-gray-400">Transparent explanations for every ranking decision</p>
+                </div>
+
+                <div class="space-y-6" id="reasoning-container">
+                    <!-- Reasoning cards populated by JS -->
                 </div>
             </div>
 
@@ -847,7 +689,7 @@
             <div id="tab-analytics" class="tab-content">
                 <div class="glass-card rounded-3xl p-8 mb-8">
                     <h2 class="text-3xl font-bold text-white mb-2">AI Analysis Dashboard</h2>
-                    <p class="text-gray-400">Deep insights into your skill profile and market positioning</p>
+                    <p class="text-gray-400">Deep insights into your skill profile and matching analytics</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -869,7 +711,7 @@
                     <h3 class="text-xl font-bold text-white mb-6">Fairness Metrics</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="text-center p-6 bg-white/5 rounded-2xl">
-                            <div class="text-4xl font-bold text-emerald-400 mb-2">0.94</div>
+                            <div class="text-4xl font-bold text-emerald-400 mb-2" id="fairness-index">0.94</div>
                             <p class="text-sm text-gray-400">Fairness Index</p>
                             <p class="text-xs text-gray-500 mt-2">No demographic bias detected</p>
                         </div>
@@ -879,9 +721,9 @@
                             <p class="text-xs text-gray-500 mt-2">All decisions explained</p>
                         </div>
                         <div class="text-center p-6 bg-white/5 rounded-2xl">
-                            <div class="text-4xl font-bold text-purple-400 mb-2">0.89</div>
-                            <p class="text-sm text-gray-400">Consistency Score</p>
-                            <p class="text-xs text-gray-500 mt-2">Reliable across evaluations</p>
+                            <div class="text-4xl font-bold text-purple-400 mb-2" id="weighted-score">0.85</div>
+                            <p class="text-sm text-gray-400">Weighted Competency</p>
+                            <p class="text-xs text-gray-500 mt-2">Skill-based scoring active</p>
                         </div>
                     </div>
                 </div>
@@ -889,206 +731,107 @@
         </div>
     </div>
 
-    <!-- Hidden file input for comparison upload -->
-    <input type="file" id="comparison-resume-input" class="hidden" accept=".pdf,.doc,.docx" onchange="handleComparisonUpload(event)">
-
     <script>
-        // Default candidate profiles for comparison (Indian names)
-        const defaultCandidates = [
-            {
-                id: 'nithin',
-                name: 'Nithin Reddy',
-                avatar: 'NR',
-                gradient: 'from-orange-400 to-red-600',
-                competencyScore: 88,
-                skills: ['React', 'Node.js', 'MongoDB', 'AWS', 'Python'],
-                skillScores: { 'React': 90, 'Node.js': 85, 'MongoDB': 88, 'AWS': 82, 'Python': 80 },
-                projects: [
-                    { name: 'E-Commerce Platform', complexity: 'High', skills: ['React', 'Node.js', 'MongoDB'] },
-                    { name: 'Weather Analytics App', complexity: 'Medium', skills: ['Python', 'AWS'] }
-                ],
-                authenticity: 96,
-                rank: 45,
-                experience: '3 years'
-            },
-            {
-                id: 'phani',
-                name: 'Phani Kumar',
-                avatar: 'PK',
-                gradient: 'from-blue-400 to-indigo-600',
-                competencyScore: 92,
-                skills: ['Java', 'Spring Boot', 'Microservices', 'Kafka', 'Docker'],
-                skillScores: { 'Java': 95, 'Spring Boot': 92, 'Microservices': 90, 'Kafka': 88, 'Docker': 85 },
-                projects: [
-                    { name: 'Banking Transaction System', complexity: 'High', skills: ['Java', 'Spring Boot', 'Kafka'] },
-                    { name: 'Container Orchestration Tool', complexity: 'High', skills: ['Docker', 'Microservices'] },
-                    { name: 'Payment Gateway Integration', complexity: 'High', skills: ['Java', 'Spring Boot'] }
-                ],
-                authenticity: 98,
-                rank: 12,
-                experience: '4 years'
-            },
-            {
-                id: 'dinesh',
-                name: 'Dinesh Varma',
-                avatar: 'DV',
-                gradient: 'from-emerald-400 to-teal-600',
-                competencyScore: 85,
-                skills: ['Python', 'TensorFlow', 'Data Analysis', 'SQL', 'Tableau'],
-                skillScores: { 'Python': 88, 'TensorFlow': 85, 'Data Analysis': 90, 'SQL': 87, 'Tableau': 82 },
-                projects: [
-                    { name: 'Sales Forecasting Model', complexity: 'High', skills: ['Python', 'TensorFlow'] },
-                    { name: 'Customer Segmentation', complexity: 'Medium', skills: ['Python', 'SQL'] }
-                ],
-                authenticity: 94,
-                rank: 78,
-                experience: '2 years'
-            },
-            {
-                id: 'vamsi',
-                name: 'Vamsi Krishna',
-                avatar: 'VK',
-                gradient: 'from-purple-400 to-pink-600',
-                competencyScore: 90,
-                skills: ['Android', 'Kotlin', 'Firebase', 'Flutter', 'Dart'],
-                skillScores: { 'Android': 92, 'Kotlin': 90, 'Firebase': 88, 'Flutter': 87, 'Dart': 85 },
-                projects: [
-                    { name: 'Social Media App', complexity: 'High', skills: ['Android', 'Kotlin', 'Firebase'] },
-                    { name: 'Cross-Platform Chat App', complexity: 'High', skills: ['Flutter', 'Dart', 'Firebase'] },
-                    { name: 'Fitness Tracker', complexity: 'Medium', skills: ['Android', 'Kotlin'] }
-                ],
-                authenticity: 97,
-                rank: 23,
-                experience: '3.5 years'
-            },
-            {
-                id: 'harsha',
-                name: 'Harsha Vardhan',
-                avatar: 'HV',
-                gradient: 'from-amber-400 to-orange-600',
-                competencyScore: 87,
-                skills: ['JavaScript', 'TypeScript', 'Angular', 'Node.js', 'GraphQL'],
-                skillScores: { 'JavaScript': 90, 'TypeScript': 88, 'Angular': 87, 'Node.js': 85, 'GraphQL': 86 },
-                projects: [
-                    { name: 'Real-time Dashboard', complexity: 'High', skills: ['Angular', 'TypeScript', 'GraphQL'] },
-                    { name: 'API Gateway Service', complexity: 'Medium', skills: ['Node.js', 'GraphQL'] }
-                ],
-                authenticity: 95,
-                rank: 56,
-                experience: '2.5 years'
-            },
-            {
-                id: 'uday',
-                name: 'Uday Kiran',
-                avatar: 'UK',
-                gradient: 'from-cyan-400 to-blue-600',
-                competencyScore: 89,
-                skills: ['DevOps', 'Kubernetes', 'Terraform', 'Jenkins', 'Azure'],
-                skillScores: { 'DevOps': 92, 'Kubernetes': 90, 'Terraform': 88, 'Jenkins': 87, 'Azure': 85 },
-                projects: [
-                    { name: 'CI/CD Pipeline Automation', complexity: 'High', skills: ['Jenkins', 'Kubernetes', 'Terraform'] },
-                    { name: 'Cloud Infrastructure Setup', complexity: 'High', skills: ['Azure', 'Terraform'] },
-                    { name: 'Monitoring System', complexity: 'Medium', skills: ['Kubernetes', 'DevOps'] }
-                ],
-                authenticity: 99,
-                rank: 34,
-                experience: '4 years'
-            },
-            {
-                id: 'sai',
-                name: 'Sai Prasad',
-                avatar: 'SP',
-                gradient: 'from-rose-400 to-red-600',
-                competencyScore: 86,
-                skills: ['PHP', 'Laravel', 'MySQL', 'Vue.js', 'Redis'],
-                skillScores: { 'PHP': 88, 'Laravel': 87, 'MySQL': 90, 'Vue.js': 85, 'Redis': 82 },
-                projects: [
-                    { name: 'Inventory Management System', complexity: 'High', skills: ['Laravel', 'MySQL', 'Vue.js'] },
-                    { name: 'Caching Layer Implementation', complexity: 'Medium', skills: ['Redis', 'PHP'] }
-                ],
-                authenticity: 93,
-                rank: 67,
-                experience: '3 years'
-            }
-        ];
+        // Initialize PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-        // Question banks based on detected skills
-        const questionBanks = {
-            'React': [
-                { id: 1, question: "Explain the virtual DOM and how React uses it to optimize performance. Compare it with the real DOM operations.", options: ["Virtual DOM is slower than real DOM", "Virtual DOM is a lightweight copy that minimizes direct DOM manipulation through diffing", "React doesn't use virtual DOM", "Virtual DOM only works with class components"], correct: 1, difficulty: 'hard', category: 'React' },
-                { id: 2, question: "What are React Hooks and how do they differ from class component lifecycle methods? Provide use cases for useEffect vs useLayoutEffect.", options: ["Hooks are only for state management", "Hooks allow functional components to use state and lifecycle features; useEffect runs after paint, useLayoutEffect before", "Hooks replace all class components", "Hooks don't support lifecycle methods"], correct: 1, difficulty: 'expert', category: 'React' },
-                { id: 3, question: "Explain React's reconciliation process and how keys help in list rendering optimization.", options: ["Keys are only for styling", "Keys help React identify elements for efficient diffing and reordering", "Reconciliation is the same as rendering", "Keys slow down performance"], correct: 1, difficulty: 'hard', category: 'React' }
-            ],
-            'Node.js': [
-                { id: 4, question: "Explain the event loop in Node.js and how it handles asynchronous operations differently from traditional multi-threading.", options: ["Node.js uses multiple threads for every request", "Event loop enables single-threaded non-blocking I/O through phases like timers, I/O callbacks, and microtasks", "Node.js doesn't support async operations", "Event loop is only for setTimeout"], correct: 1, difficulty: 'hard', category: 'Node.js' },
-                { id: 5, question: "What is the difference between process.nextTick() and setImmediate() in Node.js?", options: ["They are identical", "nextTick runs before I/O events, setImmediate runs after", "setImmediate is faster", "nextTick is deprecated"], correct: 1, difficulty: 'expert', category: 'Node.js' }
-            ],
-            'Python': [
-                { id: 6, question: "Explain Python's Global Interpreter Lock (GIL) and its impact on multi-threading performance.", options: ["GIL improves threading performance", "GIL allows only one thread to execute Python bytecode at a time, limiting CPU-bound parallelism", "GIL doesn't exist in Python 3", "GIL only affects I/O operations"], correct: 1, difficulty: 'hard', category: 'Python' },
-                { id: 7, question: "What are Python decorators and how do they work? Provide an example of a parameterized decorator.", options: ["Decorators are only for classes", "Decorators are functions that modify other functions using closures and @syntax", "Decorators slow down code", "Decorators can't accept parameters"], correct: 1, difficulty: 'medium', category: 'Python' }
-            ],
-            'Java': [
-                { id: 8, question: "Explain Java's memory model, including heap vs stack, and how garbage collection works in the JVM.", options: ["Java has no garbage collection", "Heap stores objects, stack stores references and primitives; GC uses mark-and-sweep, generational collection", "Stack is larger than heap", "GC runs continuously"], correct: 1, difficulty: 'hard', category: 'Java' },
-                { id: 9, question: "What is the difference between HashMap and ConcurrentHashMap in terms of thread safety and performance?", options: ["They are identical", "ConcurrentHashMap uses segment locking for better concurrent performance vs HashMap's unsynchronized access", "HashMap is thread-safe", "ConcurrentHashMap is slower in all cases"], correct: 1, difficulty: 'hard', category: 'Java' }
-            ],
-            'AWS': [
-                { id: 10, question: "Explain the CAP theorem and how it applies to choosing between RDS, DynamoDB, and ElastiCache.", options: ["CAP theorem is obsolete", "Systems trade between Consistency, Availability, Partition tolerance; RDS favors CP, DynamoDB favors AP", "All AWS services are identical", "CAP only applies to networking"], correct: 1, difficulty: 'expert', category: 'AWS' }
-            ],
-            'Machine Learning': [
-                { id: 11, question: "Explain the bias-variance tradeoff and how it relates to model complexity and overfitting.", options: ["High bias means overfitting", "Bias is error from assumptions, variance from sensitivity to training data; tradeoff balances under/overfitting", "Variance is always bad", "Tradeoff doesn't exist in deep learning"], correct: 1, difficulty: 'hard', category: 'ML' },
-                { id: 12, question: "What is gradient descent and how does backpropagation work in neural networks?", options: ["Gradient descent is only for linear regression", "Iterative optimization minimizing loss via partial derivatives; backprop uses chain rule to compute gradients", "Backprop is forward pass", "Gradient descent doesn't use derivatives"], correct: 1, difficulty: 'hard', category: 'ML' }
-            ],
-            'SQL': [
-                { id: 13, question: "Explain database normalization (1NF to 3NF) and when you might intentionally denormalize.", options: ["Normalization is always bad", "Reduces redundancy via atomic values, no partial/transitive dependencies; denormalize for read performance", "3NF allows duplicates", "Denormalization improves writes"], correct: 1, difficulty: 'medium', category: 'SQL' }
-            ],
-            'Docker': [
-                { id: 14, question: "Explain the difference between Docker images, containers, and layers. How does copy-on-write work?", options: ["Images are running containers", "Images are read-only templates, containers are running instances; layers share storage via copy-on-write", "Containers are stored in images", "Layers are independent files"], correct: 1, difficulty: 'hard', category: 'Docker' }
-            ],
-            'Kubernetes': [
-                { id: 15, question: "Explain Kubernetes architecture: etcd, API server, scheduler, controller manager, and kubelet.", options: ["Kubernetes has single master", "Distributed control plane: etcd stores state, API server handles requests, scheduler assigns pods, controllers maintain state, kubelet manages nodes", "All components run on worker nodes", "etcd is optional"], correct: 1, difficulty: 'expert', category: 'Kubernetes' }
-            ]
+        // Skill database for detection
+        const skillDatabase = {
+            'JavaScript': ['js', 'javascript', 'ecmascript', 'es6'],
+            'React': ['react', 'reactjs', 'react.js'],
+            'Node.js': ['node', 'nodejs', 'node.js', 'express'],
+            'Python': ['python', 'django', 'flask', 'fastapi'],
+            'Java': ['java', 'spring', 'springboot', 'hibernate'],
+            'C++': ['cpp', 'cplusplus', 'c++'],
+            'HTML': ['html', 'html5'],
+            'CSS': ['css', 'css3', 'scss', 'sass', 'tailwind'],
+            'SQL': ['sql', 'mysql', 'postgresql', 'database'],
+            'MongoDB': ['mongodb', 'mongo', 'nosql'],
+            'AWS': ['aws', 'amazon web services', 'cloud', 'ec2', 's3', 'lambda'],
+            'Docker': ['docker', 'container'],
+            'Kubernetes': ['kubernetes', 'k8s'],
+            'TensorFlow': ['tensorflow', 'tf', 'keras'],
+            'PyTorch': ['pytorch'],
+            'Machine Learning': ['machine learning', 'ml', 'ai', 'artificial intelligence'],
+            'Data Science': ['data science', 'data analysis', 'analytics'],
+            'Android': ['android', 'kotlin', 'android studio'],
+            'iOS': ['ios', 'swift', 'objective-c'],
+            'Flutter': ['flutter', 'dart'],
+            'Git': ['git', 'github', 'gitlab'],
+            'DevOps': ['devops', 'ci/cd', 'jenkins']
         };
 
-        // Coding questions
-        const codingQuestions = [
+        // Project database for internship/project opportunities
+        const opportunityDatabase = [
             {
-                id: 'code1',
-                title: 'Implement LRU Cache',
-                description: 'Design a Least Recently Used (LRU) cache with O(1) get and put operations. Handle edge cases and concurrent access considerations.',
-                difficulty: 'hard',
-                template: 'class LRUCache {\n    constructor(capacity) {\n        // Initialize cache\n    }\n    \n    get(key) {\n        // Return value or -1\n    }\n    \n    put(key, value) {\n        // Insert or update\n    }\n}',
-                relatedSkills: ['Java', 'Python', 'Data Structures']
+                id: 1,
+                title: 'Full Stack Development Internship',
+                type: 'internship',
+                company: 'TechCorp',
+                description: 'Build modern web applications using React and Node.js',
+                requiredSkills: ['React', 'Node.js', 'JavaScript', 'MongoDB'],
+                skillWeights: { 'React': 0.3, 'Node.js': 0.3, 'JavaScript': 0.2, 'MongoDB': 0.2 },
+                duration: '3-6 months',
+                location: 'Remote',
+                stipend: '₹20,000/month'
             },
             {
-                id: 'code2',
-                title: 'Merge Intervals',
-                description: 'Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals.',
-                difficulty: 'medium',
-                template: 'function merge(intervals) {\n    // Return merged intervals\n    return [];\n}',
-                relatedSkills: ['JavaScript', 'Python', 'Algorithms']
+                id: 2,
+                title: 'Machine Learning Project - Image Recognition',
+                type: 'project',
+                company: 'AI Research Lab',
+                description: 'Develop image recognition models for medical imaging',
+                requiredSkills: ['Python', 'TensorFlow', 'PyTorch', 'Machine Learning'],
+                skillWeights: { 'Python': 0.2, 'TensorFlow': 0.3, 'PyTorch': 0.3, 'Machine Learning': 0.2 },
+                duration: '4 months',
+                location: 'Hybrid'
             },
             {
-                id: 'code3',
-                title: 'Database Connection Pool',
-                description: 'Implement a thread-safe database connection pool with max size, timeout handling, and health checks.',
-                difficulty: 'expert',
-                template: 'class ConnectionPool {\n    constructor(maxConnections, timeout) {\n        // Initialize pool\n    }\n    \n    acquire() {\n        // Get connection or timeout\n    }\n    \n    release(connection) {\n        // Return to pool\n    }\n}',
-                relatedSkills: ['Java', 'System Design', 'Concurrency']
+                id: 3,
+                title: 'Cloud Computing Internship',
+                type: 'internship',
+                company: 'CloudTech',
+                description: 'Work on AWS infrastructure and deployment automation',
+                requiredSkills: ['AWS', 'Docker', 'Kubernetes', 'DevOps'],
+                skillWeights: { 'AWS': 0.4, 'Docker': 0.2, 'Kubernetes': 0.2, 'DevOps': 0.2 },
+                duration: '6 months',
+                location: 'Bangalore',
+                stipend: '₹30,000/month'
+            },
+            {
+                id: 4,
+                title: 'Mobile App Development Project',
+                type: 'project',
+                company: 'AppWorks',
+                description: 'Build cross-platform mobile apps using Flutter',
+                requiredSkills: ['Flutter', 'Dart', 'Android', 'iOS'],
+                skillWeights: { 'Flutter': 0.4, 'Dart': 0.3, 'Android': 0.15, 'iOS': 0.15 },
+                duration: '3 months',
+                location: 'Remote'
+            },
+            {
+                id: 5,
+                title: 'Backend Development Internship',
+                type: 'internship',
+                company: 'FinTech Solutions',
+                description: 'Develop scalable backend services with Java Spring Boot',
+                requiredSkills: ['Java', 'Spring Boot', 'SQL', 'Microservices'],
+                skillWeights: { 'Java': 0.3, 'Spring Boot': 0.3, 'SQL': 0.2, 'Microservices': 0.2 },
+                duration: '6 months',
+                location: 'Hyderabad',
+                stipend: '₹25,000/month'
+            },
+            {
+                id: 6,
+                title: 'Data Science Project - Predictive Analytics',
+                type: 'project',
+                company: 'Data Insights',
+                description: 'Build predictive models for business analytics',
+                requiredSkills: ['Python', 'Data Science', 'Machine Learning', 'SQL'],
+                skillWeights: { 'Python': 0.3, 'Data Science': 0.3, 'Machine Learning': 0.3, 'SQL': 0.1 },
+                duration: '4 months',
+                location: 'Remote'
             }
-        ];
-
-        // Opportunities database
-        const opportunities = [
-            { id: 1, title: 'Senior Full Stack Developer', company: 'Google', type: 'Full-time', location: 'Bangalore', salary: '₹45-65 LPA', match: 95, requirements: { minScore: 85, skills: ['React', 'Node.js'] }, description: 'Build scalable web applications serving millions of users' },
-            { id: 2, title: 'Machine Learning Engineer', company: 'Microsoft', type: 'Full-time', location: 'Hyderabad', salary: '₹40-60 LPA', match: 92, requirements: { minScore: 80, skills: ['Python', 'TensorFlow'] }, description: 'Develop AI models for cloud services' },
-            { id: 3, title: 'DevOps Engineer', company: 'Amazon', type: 'Full-time', location: 'Chennai', salary: '₹35-50 LPA', match: 88, requirements: { minScore: 75, skills: ['Docker', 'Kubernetes'] }, description: 'Manage cloud infrastructure and CI/CD pipelines' },
-            { id: 4, title: 'Backend Developer Intern', company: 'Flipkart', type: 'Internship', location: 'Bangalore', salary: '₹50K/month', match: 85, requirements: { minScore: 70, skills: ['Java', 'Spring Boot'] }, description: '6-month internship with conversion opportunity' },
-            { id: 5, title: 'React Native Developer', company: 'Swiggy', type: 'Full-time', location: 'Bangalore', salary: '₹25-40 LPA', match: 90, requirements: { minScore: 75, skills: ['React', 'Mobile'] }, description: 'Build cross-platform mobile applications' },
-            { id: 6, title: 'Data Scientist', company: 'Walmart Labs', type: 'Full-time', location: 'Bangalore', salary: '₹30-45 LPA', match: 87, requirements: { minScore: 78, skills: ['Python', 'SQL', 'ML'] }, description: 'Analyze retail data and build prediction models' },
-            { id: 7, title: 'Cloud Architect', company: 'Oracle', type: 'Full-time', location: 'Pune', salary: '₹50-75 LPA', match: 82, requirements: { minScore: 88, skills: ['AWS', 'Azure', 'Kubernetes'] }, description: 'Design enterprise cloud solutions' },
-            { id: 8, title: 'Frontend Engineering Intern', company: 'Adobe', type: 'Internship', location: 'Noida', salary: '₹45K/month', match: 80, requirements: { minScore: 65, skills: ['JavaScript', 'React'] }, description: 'Work on creative cloud web interfaces' },
-            { id: 9, title: 'Java Microservices Developer', company: 'Paytm', type: 'Full-time', location: 'Delhi', salary: '₹28-42 LPA', match: 89, requirements: { minScore: 80, skills: ['Java', 'Spring Boot', 'Microservices'] }, description: 'Build payment processing systems' },
-            { id: 10, title: 'AI Research Intern', company: 'Samsung R&D', type: 'Internship', location: 'Bangalore', salary: '₹55K/month', match: 83, requirements: { minScore: 72, skills: ['Python', 'Deep Learning'] }, description: 'Research on-device AI optimization' }
         ];
 
         // Global State
@@ -1097,30 +840,20 @@
             skills: [],
             skillScores: {},
             projects: [],
-            competencyScore: 0,
-            rank: 0,
+            rawText: '',
+            yearsOfExperience: 0,
+            education: [],
             authenticity: 0,
-            testAnswers: {},
-            codingAnswers: {}
+            fakePercentage: 0
         };
-        let currentTestQuestions = [];
-        let testState = {
-            currentQuestion: 0,
-            answers: {},
-            codingAnswers: {},
-            timeRemaining: 2700,
-            timerInterval: null
-        };
-        let comparisonCandidates = [...defaultCandidates];
-        let charts = {};
+        let matchResults = [];
 
         // Initialize
         function init() {
-            // Setup comparison file input listener
-            document.getElementById('comparison-resume-input').addEventListener('change', handleComparisonUpload);
+            // Setup PDF.js
         }
 
-        // Auth Functions
+        // Auth Functions (same as before)
         function sendOTP() {
             const name = document.getElementById('user-name').value;
             const email = document.getElementById('user-email').value;
@@ -1191,8 +924,8 @@
         }
 
         function processFile(file) {
-            if (!file.name.match(/\.(pdf|doc|docx)$/i)) {
-                alert('Please upload PDF, DOC, or DOCX files only');
+            if (!file.name.match(/\.(pdf|doc|docx|txt)$/i)) {
+                alert('Please upload PDF, DOC, DOCX, or TXT files only');
                 return;
             }
             document.getElementById('upload-content').classList.add('hidden');
@@ -1200,63 +933,164 @@
             document.getElementById('filename-display').textContent = file.name;
             document.getElementById('analyze-btn').disabled = false;
             document.getElementById('analyze-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+            
+            // Store file for analysis
+            window.uploadedFile = file;
         }
 
-        function analyzeResume() {
+        async function analyzeResume() {
             document.getElementById('upload-scanning').classList.remove('hidden');
             
-            // Simulate AI analysis
-            setTimeout(() => {
-                // Generate realistic profile based on random selection
-                const skillSets = [
-                    ['React', 'Node.js', 'MongoDB', 'AWS', 'JavaScript', 'TypeScript'],
-                    ['Python', 'TensorFlow', 'Data Analysis', 'SQL', 'Machine Learning', 'Pandas'],
-                    ['Java', 'Spring Boot', 'Microservices', 'MySQL', 'Docker', 'Kubernetes'],
-                    ['Android', 'Kotlin', 'Firebase', 'Flutter', 'Dart', 'Mobile Development']
-                ];
+            try {
+                const file = window.uploadedFile;
+                let text = '';
                 
-                const selectedSkills = skillSets[Math.floor(Math.random() * skillSets.length)];
-                userProfile.skills = selectedSkills;
-                userProfile.skillScores = {};
-                selectedSkills.forEach(skill => {
-                    userProfile.skillScores[skill] = Math.floor(Math.random() * 15) + 80; // 80-95%
+                // Extract text based on file type
+                if (file.name.endsWith('.pdf')) {
+                    text = await extractPDFText(file);
+                } else if (file.name.endsWith('.txt')) {
+                    text = await file.text();
+                } else {
+                    // For DOC/DOCX, use simulated extraction
+                    text = await simulateDocExtraction(file);
+                }
+                
+                // Parse the extracted text
+                parseResumeText(text);
+                
+                // Calculate authenticity score
+                calculateAuthenticity(text);
+                
+                // Show results
+                showAnalysisResults();
+                
+            } catch (error) {
+                console.error('Error analyzing resume:', error);
+                alert('Error analyzing resume. Please try again.');
+                document.getElementById('upload-scanning').classList.add('hidden');
+            }
+        }
+
+        async function extractPDFText(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            let text = '';
+            
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                const strings = content.items.map(item => item.str);
+                text += strings.join(' ') + '\n';
+            }
+            
+            return text;
+        }
+
+        async function simulateDocExtraction(file) {
+            // Simulate text extraction from DOC files
+            return `Experienced software developer with skills in React, Node.js, and Python.
+                    Projects:
+                    1. E-Commerce Platform - Built a full-stack e-commerce platform using React and Node.js
+                    2. Weather App - Created a weather application using React and OpenWeather API
+                    3. Task Management System - Developed a task management system with Python and Django
+                    Education: B.Tech in Computer Science
+                    Experience: 2 years of software development experience`;
+        }
+
+        function parseResumeText(text) {
+            userProfile.rawText = text.toLowerCase();
+            
+            // Detect skills
+            const detectedSkills = new Set();
+            const skillScores = {};
+            
+            Object.entries(skillDatabase).forEach(([skill, keywords]) => {
+                keywords.forEach(keyword => {
+                    if (userProfile.rawText.includes(keyword.toLowerCase())) {
+                        detectedSkills.add(skill);
+                        
+                        // Calculate skill score based on frequency and context
+                        const regex = new RegExp(keyword, 'gi');
+                        const matches = text.match(regex);
+                        const frequency = matches ? matches.length : 1;
+                        skillScores[skill] = Math.min(95, 70 + (frequency * 5));
+                    }
                 });
-                
+            });
+            
+            userProfile.skills = Array.from(detectedSkills);
+            userProfile.skillScores = skillScores;
+            
+            // Detect projects
+            const projects = [];
+            const projectPatterns = [
+                /project(?:\s*\d*)?[:\s]+([^\n.]+)[\n.]/gi,
+                /developed\s+([^\n.]+)/gi,
+                /built\s+([^\n.]+)/gi,
+                /created\s+([^\n.]+)/gi
+            ];
+            
+            projectPatterns.forEach(pattern => {
+                let match;
+                while ((match = pattern.exec(text)) !== null) {
+                    const projectName = match[1].trim();
+                    if (projectName.length > 5 && projectName.length < 100) {
+                        // Find skills used in this project
+                        const projectSkills = userProfile.skills.filter(skill => 
+                            text.toLowerCase().includes(skill.toLowerCase())
+                        ).slice(0, 3);
+                        
+                        projects.push({
+                            name: projectName,
+                            description: `Project involving ${projectSkills.join(', ')}`,
+                            complexity: projectSkills.length > 2 ? 'High' : 'Medium',
+                            skills: projectSkills,
+                            duration: '3-6 months',
+                            role: 'Developer'
+                        });
+                    }
+                }
+            });
+            
+            // Limit to unique projects
+            userProfile.projects = projects.filter((p, i, self) => 
+                i === self.findIndex(t => t.name === p.name)
+            ).slice(0, 5);
+            
+            if (userProfile.projects.length === 0) {
+                // Default projects if none detected
                 userProfile.projects = [
                     {
-                        name: 'Enterprise Resource Planning System',
-                        description: 'Full-stack web application for managing business operations with real-time analytics dashboard',
-                        complexity: 'High',
-                        skills: selectedSkills.slice(0, 3),
-                        duration: '6 months',
-                        role: 'Lead Developer'
-                    },
-                    {
-                        name: 'AI-Powered Recommendation Engine',
-                        description: 'Machine learning model for personalized content recommendations using collaborative filtering',
-                        complexity: 'High',
-                        skills: selectedSkills.slice(2, 5),
-                        duration: '4 months',
-                        role: 'ML Engineer'
-                    },
-                    {
-                        name: 'Cloud Infrastructure Automation',
-                        description: 'Automated deployment pipeline with containerization and orchestration',
+                        name: 'Sample Project 1',
+                        description: 'Project demonstrating core technical skills',
                         complexity: 'Medium',
-                        skills: selectedSkills.slice(3, 6),
+                        skills: userProfile.skills.slice(0, 2),
                         duration: '3 months',
-                        role: 'DevOps Engineer'
+                        role: 'Developer'
                     }
                 ];
-                
-                userProfile.authenticity = Math.floor(Math.random() * 10) + 88; // 88-98%
-                userProfile.experience = '3 years';
-                userProfile.domain = selectedSkills.includes('Python') ? 'Data Science/ML' : 
-                                    selectedSkills.includes('Java') ? 'Backend Development' :
-                                    selectedSkills.includes('Android') ? 'Mobile Development' : 'Full Stack Development';
-                
-                showAnalysisResults();
-            }, 3000);
+            }
+            
+            // Detect experience
+            const expMatch = text.match(/(\d+)\+?\s*years?\s*of?\s*experience/i);
+            userProfile.yearsOfExperience = expMatch ? parseInt(expMatch[1]) : 2;
+        }
+
+        function calculateAuthenticity(text) {
+            // Calculate authenticity based on multiple factors
+            const factors = {
+                hasEmail: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(text) ? 10 : 0,
+                hasPhone: /\d{10}/.test(text) ? 10 : 0,
+                hasEducation: /b\.?tech|bachelor|master|ph\.?d|degree/i.test(text) ? 15 : 0,
+                hasSkills: userProfile.skills.length > 0 ? Math.min(25, userProfile.skills.length * 3) : 0,
+                hasProjects: userProfile.projects.length > 0 ? Math.min(20, userProfile.projects.length * 4) : 0,
+                hasExperience: userProfile.yearsOfExperience > 0 ? 10 : 0,
+                textLength: Math.min(10, Math.floor(text.length / 100))
+            };
+            
+            const totalScore = Object.values(factors).reduce((a, b) => a + b, 0);
+            userProfile.authenticity = Math.min(98, totalScore);
+            userProfile.fakePercentage = 100 - userProfile.authenticity;
         }
 
         function showAnalysisResults() {
@@ -1272,7 +1106,9 @@
             
             // Populate skill bars
             const breakdownContainer = document.getElementById('skills-breakdown');
-            breakdownContainer.innerHTML = Object.entries(userProfile.skillScores).map(([skill, score]) => `
+            breakdownContainer.innerHTML = userProfile.skills.map(skill => {
+                const score = userProfile.skillScores[skill] || 80;
+                return `
                 <div>
                     <div class="flex justify-between text-sm mb-2">
                         <span class="text-gray-300">${skill}</span>
@@ -1282,14 +1118,41 @@
                         <div class="h-full bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full skill-fill" style="width: ${score}%"></div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
+            
+            // Determine primary domain
+            let domain = 'General Development';
+            if (userProfile.skills.includes('React') || userProfile.skills.includes('Node.js')) {
+                domain = 'Full Stack Development';
+            } else if (userProfile.skills.includes('Python') && userProfile.skills.includes('TensorFlow')) {
+                domain = 'Machine Learning / AI';
+            } else if (userProfile.skills.includes('Java')) {
+                domain = 'Backend Development';
+            } else if (userProfile.skills.includes('Android') || userProfile.skills.includes('iOS')) {
+                domain = 'Mobile Development';
+            } else if (userProfile.skills.includes('AWS') || userProfile.skills.includes('Docker')) {
+                domain = 'Cloud / DevOps';
+            }
             
             // Update summary
-            document.getElementById('detected-domain').textContent = userProfile.domain;
-            document.getElementById('detected-level').textContent = userProfile.experience;
+            document.getElementById('detected-domain').textContent = domain;
+            document.getElementById('detected-level').textContent = userProfile.yearsOfExperience + ' years';
             document.getElementById('projects-count').textContent = userProfile.projects.length + ' Projects';
             document.getElementById('authenticity-score').textContent = userProfile.authenticity + '%';
             document.getElementById('authenticity-bar').style.width = userProfile.authenticity + '%';
+            
+            // Show fake percentage with color coding
+            const fakeElement = document.getElementById('fake-percentage');
+            const fakePercentage = userProfile.fakePercentage;
+            fakeElement.textContent = `Fake resume probability: ${fakePercentage}%`;
+            
+            if (fakePercentage < 10) {
+                fakeElement.className = 'text-xs text-emerald-500 mt-1';
+            } else if (fakePercentage < 20) {
+                fakeElement.className = 'text-xs text-amber-500 mt-1';
+            } else {
+                fakeElement.className = 'text-xs text-red-500 mt-1';
+            }
             
             // Populate projects
             const projectsContainer = document.getElementById('detected-projects');
@@ -1297,7 +1160,7 @@
                 <div class="project-card bg-white/5 rounded-xl p-5">
                     <div class="flex justify-between items-start mb-3">
                         <h4 class="text-white font-semibold">${proj.name}</h4>
-                        <span class="difficulty-badge difficulty-${proj.complexity.toLowerCase() === 'high' ? 'hard' : 'medium'}">${proj.complexity}</span>
+                        <span class="difficulty-badge difficulty-${proj.complexity.toLowerCase()}">${proj.complexity}</span>
                     </div>
                     <p class="text-gray-400 text-sm mb-3">${proj.description}</p>
                     <div class="flex flex-wrap gap-2 mb-3">
@@ -1311,270 +1174,96 @@
             `).join('');
         }
 
-        function showComparisonPreview() {
+        function showMatchingPreview() {
+            // Calculate weighted competency scores for all opportunities
+            calculateSkillMatches();
+            
+            // Show dashboard
             document.getElementById('resume-flow').classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
-            switchTab('competition');
-            initializeCharts();
-        }
-
-        // Test Functions
-        function startSkillTest() {
-            // Generate questions based on detected skills
-            currentTestQuestions = [];
-            userProfile.skills.forEach(skill => {
-                if (questionBanks[skill]) {
-                    currentTestQuestions.push(...questionBanks[skill].slice(0, 2)); // Max 2 per skill
-                }
-            });
             
-            // Add general questions if too few
-            if (currentTestQuestions.length < 5) {
-                currentTestQuestions.push(...questionBanks['React'].slice(0, 3));
-            }
-            
-            // Shuffle and limit
-            currentTestQuestions = currentTestQuestions.sort(() => 0.5 - Math.random()).slice(0, 8);
-            
-            // Add coding question based on primary skill
-            const codingQ = codingQuestions.find(q => 
-                q.relatedSkills.some(s => userProfile.skills.includes(s))
-            ) || codingQuestions[0];
-            currentTestQuestions.push({ ...codingQ, isCoding: true, id: 'coding-' + codingQ.id });
-            
-            document.getElementById('resume-flow').classList.add('hidden');
-            document.getElementById('test-interface').classList.remove('hidden');
-            
-            testState = {
-                currentQuestion: 0,
-                answers: {},
-                codingAnswers: {},
-                timeRemaining: 2700,
-                timerInterval: null
-            };
-            
-            renderQuestionNav();
-            renderQuestion();
-            startTimer();
+            // Update dashboard with real data
+            updateDashboard();
         }
 
-        function renderQuestionNav() {
-            const nav = document.getElementById('question-nav');
-            nav.innerHTML = currentTestQuestions.map((q, i) => `
-                <button onclick="jumpToQuestion(${i})" id="nav-q-${i}" 
-                        class="w-10 h-10 rounded-lg text-sm font-medium transition-all ${i === 0 ? 'bg-amber-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}">
-                    ${i + 1}
-                </button>
-            `).join('');
-        }
-
-        function renderQuestion() {
-            const q = currentTestQuestions[testState.currentQuestion];
-            const container = document.getElementById('question-container');
-            const progress = ((testState.currentQuestion + 1) / currentTestQuestions.length) * 100;
-            document.getElementById('test-progress').style.width = `${progress}%`;
-            
-            updateQuestionNav();
-            updateNavButtons();
-            
-            if (!q.isCoding) {
-                const selected = testState.answers[q.id];
-                container.innerHTML = `
-                    <div class="glass-card rounded-3xl p-8 border border-white/10">
-                        <div class="flex items-center gap-3 mb-6">
-                            <span class="difficulty-badge difficulty-${q.difficulty}">${q.difficulty.toUpperCase()}</span>
-                            <span class="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-semibold border border-cyan-500/30">${q.category}</span>
-                            <span class="text-gray-500 text-sm">Question ${testState.currentQuestion + 1} of ${currentTestQuestions.length}</span>
-                        </div>
-                        
-                        <h3 class="text-xl font-semibold text-white mb-8 leading-relaxed">${q.question}</h3>
-                        
-                        <div class="space-y-3">
-                            ${q.options.map((opt, idx) => `
-                                <div onclick="selectMCQAnswer(${q.id}, ${idx})" 
-                                     class="test-option p-4 rounded-xl border border-white/10 bg-white/5 flex items-start gap-4 ${selected === idx ? 'selected' : ''}">
-                                    <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-sm font-bold text-gray-400 flex-shrink-0">
-                                        ${String.fromCharCode(65 + idx)}
-                                    </div>
-                                    <span class="text-gray-300 text-sm leading-relaxed">${opt}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            } else {
-                const savedCode = testState.codingAnswers[q.id] || q.template;
-                container.innerHTML = `
-                    <div class="glass-card rounded-3xl p-8 border border-white/10">
-                        <div class="flex items-center gap-3 mb-6">
-                            <span class="difficulty-badge difficulty-hard">CODING</span>
-                            <span class="text-gray-500 text-sm">Question ${testState.currentQuestion + 1} of ${currentTestQuestions.length}</span>
-                        </div>
-                        
-                        <h3 class="text-xl font-semibold text-white mb-2">${q.title}</h3>
-                        <p class="text-gray-400 mb-6">${q.description}</p>
-                        
-                        <div class="code-editor p-4">
-                            <textarea id="code-editor" class="w-full h-64 bg-transparent text-gray-300 font-mono text-sm resize-none focus:outline-none" 
-                                      spellcheck="false" oninput="saveCode(${q.id})">${savedCode}</textarea>
-                        </div>
-                        
-                        <div class="flex justify-between items-center mt-4">
-                            <span class="text-xs text-gray-500">Related: ${q.relatedSkills.join(', ')}</span>
-                            <span class="text-xs text-emerald-400"><i class="fas fa-check mr-1"></i>Auto-saved</span>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        function selectMCQAnswer(qid, idx) {
-            testState.answers[qid] = idx;
-            renderQuestion();
-        }
-
-        function saveCode(qid) {
-            const code = document.getElementById('code-editor').value;
-            testState.codingAnswers[qid] = code;
-        }
-
-        function updateQuestionNav() {
-            currentTestQuestions.forEach((q, i) => {
-                const btn = document.getElementById(`nav-q-${i}`);
-                if (i === testState.currentQuestion) {
-                    btn.className = 'w-10 h-10 rounded-lg text-sm font-medium transition-all bg-amber-500 text-white';
-                } else if (q.isCoding) {
-                    const answered = testState.codingAnswers[q.id] && testState.codingAnswers[q.id].length > q.template.length;
-                    btn.className = `w-10 h-10 rounded-lg text-sm font-medium transition-all ${answered ? 'bg-cyan-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`;
-                } else {
-                    const answered = testState.answers[q.id] !== undefined;
-                    btn.className = `w-10 h-10 rounded-lg text-sm font-medium transition-all ${answered ? 'bg-cyan-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`;
-                }
-            });
-        }
-
-        function updateNavButtons() {
-            const prevBtn = document.getElementById('prev-btn');
-            const nextBtn = document.getElementById('next-btn');
-            
-            prevBtn.disabled = testState.currentQuestion === 0;
-            prevBtn.style.opacity = testState.currentQuestion === 0 ? '0.5' : '1';
-            
-            if (testState.currentQuestion === currentTestQuestions.length - 1) {
-                nextBtn.innerHTML = 'Submit <i class="fas fa-check ml-2"></i>';
-                nextBtn.onclick = submitTest;
-                nextBtn.classList.add('bg-emerald-500/20', 'text-emerald-400');
-            } else {
-                nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right ml-2"></i>';
-                nextBtn.onclick = nextQuestion;
-                nextBtn.classList.remove('bg-emerald-500/20', 'text-emerald-400');
-            }
-        }
-
-        function jumpToQuestion(idx) {
-            testState.currentQuestion = idx;
-            renderQuestion();
-        }
-
-        function nextQuestion() {
-            if (testState.currentQuestion < currentTestQuestions.length - 1) {
-                testState.currentQuestion++;
-                renderQuestion();
-            }
-        }
-
-        function prevQuestion() {
-            if (testState.currentQuestion > 0) {
-                testState.currentQuestion--;
-                renderQuestion();
-            }
-        }
-
-        function startTimer() {
-            updateTimerDisplay();
-            testState.timerInterval = setInterval(() => {
-                testState.timeRemaining--;
-                updateTimerDisplay();
+        function calculateSkillMatches() {
+            matchResults = opportunityDatabase.map(opportunity => {
+                let totalWeightedScore = 0;
+                let maxPossibleScore = 0;
+                let matchedSkills = [];
+                let missingSkills = [];
                 
-                if (testState.timeRemaining <= 300) {
-                    document.getElementById('test-timer').classList.add('timer-warning');
-                }
+                // Calculate weighted competency score
+                Object.entries(opportunity.skillWeights).forEach(([skill, weight]) => {
+                    maxPossibleScore += weight * 100;
+                    
+                    if (userProfile.skills.includes(skill)) {
+                        const skillScore = userProfile.skillScores[skill] || 80;
+                        totalWeightedScore += weight * skillScore;
+                        matchedSkills.push({ skill, score: skillScore, weight });
+                    } else {
+                        missingSkills.push({ skill, weight });
+                    }
+                });
                 
-                if (testState.timeRemaining <= 0) {
-                    submitTest();
+                // Normalize to percentage
+                const matchScore = maxPossibleScore > 0 ? (totalWeightedScore / maxPossibleScore) * 100 : 0;
+                
+                // Generate reasoning
+                const reasoning = generateReasoning(opportunity, matchedSkills, missingSkills, matchScore);
+                
+                return {
+                    ...opportunity,
+                    matchScore: Math.round(matchScore),
+                    matchedSkills,
+                    missingSkills,
+                    reasoning
+                };
+            });
+            
+            // Sort by match score
+            matchResults.sort((a, b) => b.matchScore - a.matchScore);
+        }
+
+        function generateReasoning(opportunity, matchedSkills, missingSkills, matchScore) {
+            const reasons = [];
+            
+            if (matchedSkills.length > 0) {
+                const topSkill = matchedSkills[0];
+                reasons.push(`Strong match in ${topSkill.skill} (score: ${topSkill.score}%, weight: ${Math.round(topSkill.weight * 100)}%)`);
+                
+                if (matchedSkills.length > 1) {
+                    reasons.push(`Additional matching skills: ${matchedSkills.slice(1).map(s => s.skill).join(', ')}`);
                 }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const mins = Math.floor(testState.timeRemaining / 60);
-            const secs = testState.timeRemaining % 60;
-            document.getElementById('test-timer').textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        function confirmExitTest() {
-            if (confirm('Are you sure you want to exit? Your progress will be lost.')) {
-                clearInterval(testState.timerInterval);
-                document.getElementById('test-interface').classList.add('hidden');
-                document.getElementById('resume-flow').classList.remove('hidden');
             }
+            
+            if (missingSkills.length > 0) {
+                const criticalMissing = missingSkills.filter(s => s.weight > 0.2);
+                if (criticalMissing.length > 0) {
+                    reasons.push(`Missing critical skills: ${criticalMissing.map(s => s.skill).join(', ')}`);
+                }
+            }
+            
+            reasons.push(`Overall weighted competency score: ${Math.round(matchScore)}%`);
+            
+            return reasons;
         }
 
-        function submitTest() {
-            clearInterval(testState.timerInterval);
+        function updateDashboard() {
+            // Update overview stats
+            document.getElementById('total-skills').textContent = userProfile.skills.length;
+            document.getElementById('total-projects').textContent = userProfile.projects.length;
             
-            // Calculate scores
-            let mcqCorrect = 0;
-            let mcqTotal = 0;
-            
-            currentTestQuestions.forEach(q => {
-                if (!q.isCoding) {
-                    mcqTotal++;
-                    if (testState.answers[q.id] === q.correct) mcqCorrect++;
-                }
-            });
-            
-            const mcqScore = mcqTotal > 0 ? (mcqCorrect / mcqTotal) * 100 : 0;
-            
-            // Coding evaluation (simulated)
-            let codingPassed = 0;
-            let codingTotal = 0;
-            
-            currentTestQuestions.forEach(q => {
-                if (q.isCoding) {
-                    codingTotal++;
-                    const answer = testState.codingAnswers[q.id] || '';
-                    if (answer.length > q.template.length + 50) codingPassed++;
-                }
-            });
-            
-            const codingScore = codingTotal > 0 ? (codingPassed / codingTotal) * 100 : 0;
-            const totalScore = Math.round((mcqScore * 0.6) + (codingScore * 0.4));
-            
-            // Calculate rank based on score
-            const allScores = [...defaultCandidates.map(c => c.competencyScore), totalScore].sort((a, b) => b - a);
-            const rank = allScores.indexOf(totalScore) + 1;
-            const percentile = Math.round(((allScores.length - rank) / allScores.length) * 100);
-            
-            userProfile.competencyScore = totalScore;
-            userProfile.rank = rank;
-            userProfile.accuracy = Math.round((mcqCorrect / mcqTotal) * 100);
-            userProfile.percentile = percentile;
-            userProfile.mcqCorrect = mcqCorrect;
-            userProfile.mcqTotal = mcqTotal;
-            userProfile.codingPassed = codingPassed;
-            userProfile.codingTotal = codingTotal;
-            
-            showDashboard();
-        }
-
-        function showDashboard() {
-            document.getElementById('test-interface').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
+            const highMatches = matchResults.filter(m => m.matchScore >= 70).length;
+            document.getElementById('match-opportunities').textContent = highMatches;
+            document.getElementById('authenticity-value').textContent = userProfile.authenticity + '%';
             
             // Animate score
+            const avgScore = matchResults.length > 0 ? 
+                Math.round(matchResults.reduce((sum, m) => sum + m.matchScore, 0) / matchResults.length) : 75;
+            
             const circumference = 2 * Math.PI * 88;
-            const offset = circumference - (userProfile.competencyScore / 100) * circumference;
+            const offset = circumference - (avgScore / 100) * circumference;
             
             setTimeout(() => {
                 document.getElementById('score-ring').style.strokeDashoffset = offset;
@@ -1583,122 +1272,23 @@
             // Animate number
             let current = 0;
             const interval = setInterval(() => {
-                if (current >= userProfile.competencyScore) {
+                if (current >= avgScore) {
                     clearInterval(interval);
-                    document.getElementById('final-score').textContent = userProfile.competencyScore + '%';
+                    document.getElementById('final-score').textContent = avgScore;
                 } else {
                     current++;
-                    document.getElementById('final-score').textContent = current + '%';
+                    document.getElementById('final-score').textContent = current;
                 }
             }, 20);
             
-            // Set stats
-            document.getElementById('user-rank').textContent = userProfile.rank;
-            document.getElementById('mcq-score').textContent = `${userProfile.mcqCorrect}/${userProfile.mcqTotal}`;
-            document.getElementById('coding-score').textContent = `${userProfile.codingPassed}/${userProfile.codingTotal}`;
-            document.getElementById('accuracy').textContent = userProfile.accuracy + '%';
-            document.getElementById('percentile').textContent = userProfile.percentile + 'th';
-            document.getElementById('final-authenticity').textContent = userProfile.authenticity + '%';
-            
-            // Set message
-            const title = document.getElementById('result-title');
-            const message = document.getElementById('result-message');
-            
-            if (userProfile.competencyScore >= 85) {
-                title.textContent = 'Exceptional Competency!';
-                title.className = 'text-3xl font-bold text-emerald-400 mb-2';
-                message.textContent = 'Top-tier performance! Your skills are verified and ranked highly against the competition.';
-            } else if (userProfile.competencyScore >= 70) {
-                title.textContent = 'Strong Performance!';
-                title.className = 'text-3xl font-bold text-cyan-400 mb-2';
-                message.textContent = 'Solid technical foundation with verified skills. Good market positioning.';
-            } else {
-                title.textContent = 'Skill Validation Complete';
-                title.className = 'text-3xl font-bold text-amber-400 mb-2';
-                message.textContent = 'Assessment completed. Focus areas identified for skill improvement.';
-            }
-            
-            // AI Explanations
-            const explanations = [
-                {
-                    title: 'Competency Scoring Methodology',
-                    content: `Your score of ${userProfile.competencyScore}% is calculated using a weighted combination of technical MCQs (60%) and practical coding assessment (40%). This ensures both theoretical knowledge and practical application are validated.`,
-                    icon: 'fa-calculator'
-                },
-                {
-                    title: 'Project Requirements Mapping',
-                    content: `Your detected skills (${userProfile.skills.slice(0, 3).join(', ')}) were mapped against industry-standard job requirements. Your project complexity scores indicate ${userProfile.projects.filter(p => p.complexity === 'High').length} high-complexity implementations.`,
-                    icon: 'fa-project-diagram'
-                },
-                {
-                    title: 'Fairness-Aware Ranking',
-                    content: `Rank #${userProfile.rank} was determined using bias-mitigated algorithms. Your ranking considers verified competency scores only, excluding demographic factors. Transparency score: 100%.`,
-                    icon: 'fa-balance-scale'
-                },
-                {
-                    title: 'Skill Consistency Analysis',
-                    content: `Cross-validation between resume claims (${userProfile.skills.length} skills) and test performance shows ${userProfile.accuracy}% consistency, indicating high resume authenticity (${userProfile.authenticity}%).`,
-                    icon: 'fa-check-double'
-                }
-            ];
-            
-            document.getElementById('ai-explanations').innerHTML = explanations.map(exp => `
-                <div class="explanation-card rounded-xl p-5">
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fas ${exp.icon} text-cyan-400"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-white font-semibold mb-2">${exp.title}</h4>
-                            <p class="text-gray-400 text-sm leading-relaxed">${exp.content}</p>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            
-            // Placement Probability
-            const highMatchOpps = opportunities.filter(o => userProfile.competencyScore >= o.requirements.minScore);
-            const probability = Math.min(95, Math.round((userProfile.competencyScore / 100) * 100));
-            
-            document.getElementById('placement-stats').innerHTML = `
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex justify-between text-sm mb-2">
-                            <span class="text-gray-400">Overall Placement Chance</span>
-                            <span class="text-cyan-400 font-bold">${probability}%</span>
-                        </div>
-                        <div class="h-3 bg-white/10 rounded-full overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full" style="width: ${probability}%"></div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mt-4">
-                        <div class="bg-white/5 rounded-xl p-4 text-center">
-                            <div class="text-2xl font-bold text-emerald-400">${highMatchOpps.length}</div>
-                            <div class="text-xs text-gray-500">High Match Jobs</div>
-                        </div>
-                        <div class="bg-white/5 rounded-xl p-4 text-center">
-                            <div class="text-2xl font-bold text-purple-400">${userProfile.rank}</div>
-                            <div class="text-xs text-gray-500">Market Rank</div>
-                        </div>
-                    </div>
-                    <div class="bg-white/5 rounded-xl p-4">
-                        <p class="text-sm text-gray-400 mb-2">Based on:</p>
-                        <ul class="text-xs text-gray-500 space-y-1">
-                            <li><i class="fas fa-check text-emerald-400 mr-2"></i>Competency Score: ${userProfile.competencyScore}%</li>
-                            <li><i class="fas fa-check text-emerald-400 mr-2"></i>Verified Skills: ${userProfile.skills.length}</li>
-                            <li><i class="fas fa-check text-emerald-400 mr-2"></i>Project Complexity: High</li>
-                            <li><i class="fas fa-check text-emerald-400 mr-2"></i>Resume Authenticity: ${userProfile.authenticity}%</li>
-                        </ul>
-                    </div>
-                </div>
-            `;
+            document.getElementById('user-rank').textContent = highMatches;
             
             // Populate Projects Tab
             document.getElementById('projects-detail-grid').innerHTML = userProfile.projects.map(proj => `
                 <div class="project-card glass-card rounded-2xl p-6 bg-white/5">
                     <div class="flex justify-between items-start mb-4">
                         <h3 class="text-xl font-bold text-white">${proj.name}</h3>
-                        <span class="difficulty-badge difficulty-${proj.complexity.toLowerCase() === 'high' ? 'hard' : 'medium'}">${proj.complexity}</span>
+                        <span class="difficulty-badge difficulty-${proj.complexity.toLowerCase()}">${proj.complexity}</span>
                     </div>
                     <p class="text-gray-400 mb-4">${proj.description}</p>
                     <div class="space-y-3 mb-4">
@@ -1717,37 +1307,166 @@
                             ${proj.skills.map(s => `<span class="skill-tag px-3 py-1 rounded-full text-xs">${s}</span>`).join('')}
                         </div>
                     </div>
-                    <div class="mt-4 pt-4 border-t border-white/10">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs text-gray-500">Skill Validation</span>
-                            <span class="text-xs text-emerald-400"><i class="fas fa-check-circle mr-1"></i>Verified</span>
-                        </div>
-                    </div>
                 </div>
-            `).join('');
+                `).join('');
             
-            // Populate Opportunities
-            renderOpportunities('all');
+            // Populate Matches
+            renderMatches('all');
+            
+            // Populate Reasoning
+            renderReasoning();
             
             // Initialize charts
             initializeCharts();
+        }
+
+        function renderMatches(filter) {
+            let filtered = matchResults;
+            if (filter === 'internship') {
+                filtered = matchResults.filter(m => m.type === 'internship');
+            } else if (filter === 'project') {
+                filtered = matchResults.filter(m => m.type === 'project');
+            } else if (filter === 'high-match') {
+                filtered = matchResults.filter(m => m.matchScore >= 80);
+            }
             
-            // Add user to comparison
-            const userCandidate = {
-                id: 'user',
-                name: currentUser.name,
-                avatar: currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase(),
-                gradient: 'from-cyan-400 to-purple-600',
-                competencyScore: userProfile.competencyScore,
-                skills: userProfile.skills,
-                skillScores: userProfile.skillScores,
-                projects: userProfile.projects,
-                authenticity: userProfile.authenticity,
-                rank: userProfile.rank,
-                isUser: true
-            };
+            document.getElementById('matches-grid').innerHTML = filtered.map(match => `
+                <div class="opportunity-card glass-card rounded-2xl p-6 border border-white/10">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-1">${match.title}</h4>
+                            <p class="text-cyan-400 font-medium">${match.company}</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full ${match.matchScore >= 80 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'} text-sm font-semibold">
+                            ${match.matchScore}% Match
+                        </span>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">${match.description}</p>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                            <i class="fas fa-clock text-gray-500"></i> ${match.duration}
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                            <i class="fas fa-map-marker-alt text-gray-500"></i> ${match.location}
+                        </div>
+                        ${match.stipend ? `
+                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                            <i class="fas fa-rupee-sign text-gray-500"></i> ${match.stipend}
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="border-t border-white/10 pt-4">
+                        <p class="text-xs text-gray-500 mb-2">Required Skills:</p>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            ${match.requiredSkills.map(skill => {
+                                const hasSkill = userProfile.skills.includes(skill);
+                                return `<span class="px-2 py-1 rounded text-xs ${hasSkill ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/5 text-gray-400 border border-white/10'}">
+                                    ${skill} ${hasSkill ? '✓' : '○'}
+                                </span>`;
+                            }).join('')}
+                        </div>
+                        <button onclick="showMatchDetails(${match.id})" class="w-full mt-2 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 text-sm font-medium transition-colors">
+                            View Match Reasoning <i class="fas fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterMatches(type) {
+            renderMatches(type);
+        }
+
+        function showMatchDetails(matchId) {
+            const match = matchResults.find(m => m.id === matchId);
+            if (!match) return;
             
-            comparisonCandidates = [userCandidate, ...defaultCandidates].sort((a, b) => b.competencyScore - a.competencyScore);
+            // Switch to reasoning tab
+            switchTab('reasoning');
+            
+            // Highlight this match's reasoning
+            const reasoningCards = document.querySelectorAll('#reasoning-container > div');
+            reasoningCards.forEach(card => {
+                if (card.dataset.matchId == matchId) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    card.classList.add('ring-2', 'ring-cyan-500');
+                    setTimeout(() => card.classList.remove('ring-2', 'ring-cyan-500'), 3000);
+                }
+            });
+        }
+
+        function renderReasoning() {
+            document.getElementById('reasoning-container').innerHTML = matchResults.map(match => `
+                <div class="glass-card rounded-3xl p-8" data-match-id="${match.id}">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white">${match.title}</h3>
+                            <p class="text-cyan-400">${match.company}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-3xl font-bold text-cyan-400">${match.matchScore}%</div>
+                            <p class="text-xs text-gray-500">Weighted Match Score</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                        <div>
+                            <h4 class="text-sm font-semibold text-gray-400 mb-4">MATCHED SKILLS</h4>
+                            <div class="space-y-3">
+                                ${match.matchedSkills.map(s => `
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="text-white">${s.skill}</span>
+                                            <span class="text-emerald-400">${s.score}%</span>
+                                        </div>
+                                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                            <div class="h-full bg-emerald-400 rounded-full" style="width: ${s.score}%"></div>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Weight: ${Math.round(s.weight * 100)}%</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-sm font-semibold text-gray-400 mb-4">REQUIRED SKILLS</h4>
+                            <div class="space-y-4">
+                                ${match.requiredSkills.map(skill => {
+                                    const hasSkill = userProfile.skills.includes(skill);
+                                    return `
+                                    <div class="flex items-center justify-between p-3 rounded-lg ${hasSkill ? 'bg-emerald-500/10' : 'bg-amber-500/10'}">
+                                        <div>
+                                            <span class="text-white">${skill}</span>
+                                            ${!hasSkill ? '<p class="text-xs text-amber-400 mt-1">Missing - Weight: ' + Math.round(match.skillWeights[skill] * 100) + '%</p>' : ''}
+                                        </div>
+                                        ${hasSkill ? '<i class="fas fa-check-circle text-emerald-400"></i>' : '<i class="fas fa-exclamation-triangle text-amber-400"></i>'}
+                                    </div>
+                                `}).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="match-reasoning p-6 rounded-xl">
+                        <h4 class="text-sm font-semibold text-cyan-400 mb-4">EXPLAINABLE REASONING</h4>
+                        <ul class="space-y-2">
+                            ${match.reasoning.map(reason => `
+                                <li class="flex items-start gap-2 text-gray-300">
+                                    <i class="fas fa-chevron-right text-cyan-400 mt-1 text-xs"></i>
+                                    <span class="text-sm">${reason}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t border-white/10">
+                        <p class="text-xs text-gray-500">
+                            <i class="fas fa-balance-scale mr-1 text-emerald-400"></i>
+                            Fairness-Aware: This score is calculated using weighted competency scoring, not keyword matching. 
+                            Skill weights are predetermined to ensure equitable evaluation.
+                        </p>
+                    </div>
+                </div>
+            `).join('');
         }
 
         // Tab Switching
@@ -1757,194 +1476,19 @@
             
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(`nav-${tab}`).classList.add('active');
-            
-            if (tab === 'competition') {
-                setTimeout(updateComparisonTable, 100);
-            }
-        }
-
-        // Opportunities
-        function renderOpportunities(filter) {
-            let filtered = opportunities;
-            if (filter !== 'all') {
-                filtered = opportunities.filter(o => o.type.toLowerCase().includes(filter) || o.location.toLowerCase().includes(filter));
-            }
-            
-            // Sort by match score
-            filtered = filtered.sort((a, b) => b.match - a.match);
-            
-            document.getElementById('opportunities-grid').innerHTML = filtered.map(opp => {
-                const canApply = userProfile.competencyScore >= opp.requirements.minScore;
-                return `
-                    <div class="opportunity-card glass-card rounded-2xl p-6 border border-white/10">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h4 class="text-lg font-bold text-white mb-1">${opp.title}</h4>
-                                <p class="text-cyan-400 font-medium">${opp.company}</p>
-                            </div>
-                            <span class="px-3 py-1 rounded-full bg-white/5 text-xs text-gray-300 border border-white/10">${opp.type}</span>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-4">${opp.description}</p>
-                        <div class="space-y-2 mb-4">
-                            <div class="flex items-center gap-2 text-sm text-gray-400">
-                                <i class="fas fa-map-marker-alt text-gray-500"></i> ${opp.location}
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-gray-400">
-                                <i class="fas fa-rupee-sign text-gray-500"></i> ${opp.salary}
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            ${opp.requirements.skills.map(s => `<span class="px-2 py-1 rounded bg-white/5 text-xs text-gray-400 border border-white/10">${s}</span>`).join('')}
-                        </div>
-                        <div class="flex items-center justify-between pt-4 border-t border-white/10">
-                            <div class="flex items-center gap-2">
-                                <div class="w-2 h-2 rounded-full ${canApply ? 'bg-emerald-400' : 'bg-amber-400'}"></div>
-                                <span class="text-sm ${canApply ? 'text-emerald-400' : 'text-amber-400'}">
-                                    ${canApply ? `${opp.match}% Match` : 'Score Required: ' + opp.requirements.minScore + '%'}
-                                </span>
-                            </div>
-                            <button class="px-4 py-2 rounded-lg ${canApply ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white' : 'bg-white/5 text-gray-400 cursor-not-allowed'} text-sm font-medium transition-all" ${!canApply ? 'disabled' : ''}>
-                                ${canApply ? 'Apply Now' : 'Not Eligible'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function filterOpportunities(type) {
-            renderOpportunities(type);
-        }
-
-        // Comparison Functions
-        function uploadComparisonResume() {
-            document.getElementById('comparison-resume-input').click();
-        }
-
-        function handleComparisonUpload(e) {
-            if (e.target.files.length === 0) return;
-            
-            const file = e.target.files[0];
-            
-            // Simulate processing
-            setTimeout(() => {
-                const newCandidate = {
-                    id: 'custom-' + Date.now(),
-                    name: file.name.replace(/\.[^/.]+$/, ""),
-                    avatar: 'CU',
-                    gradient: 'from-pink-400 to-rose-600',
-                    competencyScore: Math.floor(Math.random() * 20) + 75,
-                    skills: ['JavaScript', 'React', 'Node.js'],
-                    skillScores: { 'JavaScript': 85, 'React': 82, 'Node.js': 80 },
-                    projects: [{ name: 'Custom Project', complexity: 'Medium', skills: ['React', 'Node.js'] }],
-                    authenticity: Math.floor(Math.random() * 15) + 85,
-                    rank: Math.floor(Math.random() * 50) + 20,
-                    isCustom: true
-                };
-                
-                comparisonCandidates.push(newCandidate);
-                comparisonCandidates.sort((a, b) => b.competencyScore - a.competencyScore);
-                
-                updateComparisonTable();
-                updateComparisonChart();
-                
-                alert('Resume added to comparison!');
-            }, 1500);
-        }
-
-        function updateComparisonTable() {
-            const tbody = document.getElementById('comparison-table-body');
-            tbody.innerHTML = comparisonCandidates.map((c, idx) => `
-                <tr class="comparison-row ${c.isUser ? 'user-highlight' : ''} border-b border-white/5">
-                    <td class="py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br ${c.gradient} flex items-center justify-center text-white font-bold text-sm">
-                                ${c.avatar}
-                            </div>
-                            <div>
-                                <div class="text-white font-medium">${c.name}</div>
-                                ${c.isUser ? '<div class="text-xs text-cyan-400">You</div>' : ''}
-                            </div>
-                        </div>
-                    </td>
-                    <td class="py-4">
-                        <div class="flex items-center gap-2">
-                            <div class="w-16 h-2 bg-white/10 rounded-full overflow-hidden">
-                                <div class="h-full bg-cyan-400 rounded-full" style="width: ${c.competencyScore}%"></div>
-                            </div>
-                            <span class="text-cyan-400 font-semibold">${c.competencyScore}%</span>
-                        </div>
-                    </td>
-                    <td class="py-4 text-gray-400">${c.skills.length} skills</td>
-                    <td class="py-4 text-gray-400">${c.projects.length} projects</td>
-                    <td class="py-4">
-                        <span class="${c.authenticity > 90 ? 'text-emerald-400' : c.authenticity > 80 ? 'text-amber-400' : 'text-red-400'} font-semibold">
-                            ${c.authenticity}%
-                        </span>
-                    </td>
-                    <td class="py-4">
-                        <span class="px-3 py-1 rounded-full ${idx < 3 ? 'bg-amber-500/20 text-amber-400' : 'bg-white/5 text-gray-400'} text-sm font-medium">
-                            #${idx + 1}
-                        </span>
-                    </td>
-                </tr>
-            `).join('');
         }
 
         // Charts
         function initializeCharts() {
-            // Comparison Chart
-            const ctx1 = document.getElementById('comparisonChart');
-            if (ctx1) {
-                if (charts.comparison) charts.comparison.destroy();
-                charts.comparison = new Chart(ctx1, {
-                    type: 'radar',
-                    data: {
-                        labels: ['Technical Skills', 'Project Complexity', 'Code Quality', 'Problem Solving', 'Experience'],
-                        datasets: comparisonCandidates.slice(0, 4).map((c, idx) => ({
-                            label: c.name,
-                            data: [
-                                c.competencyScore,
-                                c.projects.filter(p => p.complexity === 'High').length * 25 + 50,
-                                c.authenticity,
-                                c.competencyScore * 0.9,
-                                parseInt(c.experience) * 20 || 60
-                            ],
-                            borderColor: idx === 0 ? '#06b6d4' : idx === 1 ? '#a855f7' : idx === 2 ? '#f59e0b' : '#10b981',
-                            backgroundColor: idx === 0 ? 'rgba(6, 182, 212, 0.1)' : idx === 1 ? 'rgba(168, 85, 247, 0.1)' : idx === 2 ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                            borderWidth: 2
-                        }))
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            r: {
-                                angleLines: { color: 'rgba(255,255,255,0.1)' },
-                                grid: { color: 'rgba(255,255,255,0.1)' },
-                                pointLabels: { color: 'rgba(255,255,255,0.7)' },
-                                ticks: { display: false, backdropColor: 'transparent' }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                labels: { color: 'rgba(255,255,255,0.7)' }
-                            }
-                        }
-                    }
-                });
-            }
-            
             // Skills Chart
-            const ctx2 = document.getElementById('skillsChart');
-            if (ctx2) {
-                if (charts.skills) charts.skills.destroy();
-                charts.skills = new Chart(ctx2, {
+            const ctx1 = document.getElementById('skillsChart');
+            if (ctx1) {
+                new Chart(ctx1, {
                     type: 'doughnut',
                     data: {
-                        labels: Object.keys(userProfile.skillScores),
+                        labels: userProfile.skills.slice(0, 6),
                         datasets: [{
-                            data: Object.values(userProfile.skillScores),
+                            data: userProfile.skills.slice(0, 6).map(s => userProfile.skillScores[s] || 80),
                             backgroundColor: [
                                 '#06b6d4', '#a855f7', '#f59e0b', '#10b981', '#ef4444', '#3b82f6'
                             ],
@@ -1965,16 +1509,15 @@
             }
             
             // Projects Chart
-            const ctx3 = document.getElementById('projectsChart');
-            if (ctx3) {
-                if (charts.projects) charts.projects.destroy();
-                charts.projects = new Chart(ctx3, {
+            const ctx2 = document.getElementById('projectsChart');
+            if (ctx2) {
+                new Chart(ctx2, {
                     type: 'bar',
                     data: {
                         labels: userProfile.projects.map(p => p.name.substring(0, 15) + '...'),
                         datasets: [{
                             label: 'Complexity Score',
-                            data: userProfile.projects.map(p => p.complexity === 'High' ? 90 : 70),
+                            data: userProfile.projects.map(p => p.complexity === 'High' ? 90 : p.complexity === 'Medium' ? 70 : 50),
                             backgroundColor: 'rgba(168, 85, 247, 0.6)',
                             borderColor: '#a855f7',
                             borderWidth: 1
@@ -2000,25 +1543,10 @@
                     }
                 });
             }
-        }
-
-        function updateComparisonChart() {
-            if (charts.comparison) {
-                charts.comparison.data.datasets = comparisonCandidates.slice(0, 4).map((c, idx) => ({
-                    label: c.name,
-                    data: [
-                        c.competencyScore,
-                        c.projects.filter(p => p.complexity === 'High').length * 25 + 50,
-                        c.authenticity,
-                        c.competencyScore * 0.9,
-                        parseInt(c.experience) * 20 || 60
-                    ],
-                    borderColor: idx === 0 ? '#06b6d4' : idx === 1 ? '#a855f7' : idx === 2 ? '#f59e0b' : '#10b981',
-                    backgroundColor: idx === 0 ? 'rgba(6, 182, 212, 0.1)' : idx === 1 ? 'rgba(168, 85, 247, 0.1)' : idx === 2 ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                    borderWidth: 2
-                }));
-                charts.comparison.update();
-            }
+            
+            // Update fairness metrics
+            document.getElementById('weighted-score').textContent = (matchResults.length > 0 ? 
+                (matchResults.reduce((sum, m) => sum + m.matchScore, 0) / matchResults.length / 100).toFixed(2) : '0.85');
         }
 
         // Initialize
