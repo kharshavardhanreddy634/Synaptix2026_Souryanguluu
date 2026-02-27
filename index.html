@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
     <style>
         * {
             font-family: 'Inter', sans-serif;
@@ -22,7 +23,6 @@
             overflow-x: hidden;
         }
         
-        /* Animated Gradient Background */
         .gradient-bg {
             position: fixed;
             top: 0;
@@ -43,7 +43,6 @@
             66% { transform: translate(-20px, 20px) scale(0.9); }
         }
         
-        /* Glass Cards */
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px);
@@ -56,76 +55,30 @@
             box-shadow: 0 8px 32px 0 rgba(120, 119, 198, 0.2);
         }
         
-        /* Neon Glows */
-        .neon-cyan {
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.5), 0 0 40px rgba(6, 182, 212, 0.3);
-        }
+        .neon-cyan { box-shadow: 0 0 20px rgba(6, 182, 212, 0.5), 0 0 40px rgba(6, 182, 212, 0.3); }
+        .neon-purple { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.3); }
+        .neon-pink { box-shadow: 0 0 20px rgba(236, 72, 153, 0.5), 0 0 40px rgba(236, 72, 153, 0.3); }
         
-        .neon-purple {
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.3);
-        }
-        
-        .neon-pink {
-            box-shadow: 0 0 20px rgba(236, 72, 153, 0.5), 0 0 40px rgba(236, 72, 153, 0.3);
-        }
-        
-        /* Score Ring Animation */
-        .score-ring-circle {
-            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-        
-        /* Floating Animation */
-        .float {
-            animation: float 6s ease-in-out infinite;
-        }
-        
+        .float { animation: float 6s ease-in-out infinite; }
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-20px); }
         }
         
-        /* Pulse Glow */
-        .pulse-glow {
-            animation: pulseGlow 3s ease-in-out infinite;
-        }
-        
+        .pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
         @keyframes pulseGlow {
             0%, 100% { opacity: 0.5; }
             50% { opacity: 1; }
         }
         
-        /* Skill Bar Animation */
-        .skill-fill {
-            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        .skill-fill { transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
         
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.02);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        /* Tab Active State */
-        .nav-item {
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
+        .nav-item { position: relative; transition: all 0.3s ease; }
         .nav-item::after {
             content: '';
             position: absolute;
@@ -136,35 +89,15 @@
             background: linear-gradient(90deg, #06b6d4, #a855f7);
             transition: width 0.3s ease;
         }
+        .nav-item.active::after { width: 100%; }
+        .nav-item.active { color: #fff; text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
         
-        .nav-item.active::after {
-            width: 100%;
-        }
-        
-        .nav-item.active {
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-        }
-        
-        /* Heatmap Cells */
-        .heatmap-cell {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .heatmap-cell:hover {
-            transform: scale(1.2) rotate(3deg);
-            z-index: 10;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        
-        /* Button Hover Effects */
         .btn-primary {
             background: linear-gradient(135deg, #06b6d4 0%, #a855f7 100%);
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
         }
-        
         .btn-primary::before {
             content: '';
             position: absolute;
@@ -175,915 +108,1005 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
             transition: left 0.5s;
         }
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4); }
         
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4);
-        }
-        
-        /* Tag Styles */
-        .tag {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.2s ease;
-        }
-        
-        .tag:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-1px);
-        }
-        
-        /* Explanation Node */
-        .explanation-node {
-            position: relative;
-            padding-left: 30px;
-        }
-        
-        .explanation-node::before {
-            content: '';
-            position: absolute;
-            left: 8px;
-            top: 24px;
-            bottom: -20px;
-            width: 2px;
-            background: linear-gradient(to bottom, rgba(6, 182, 212, 0.5), rgba(168, 85, 247, 0.5));
-        }
-        
-        .explanation-node:last-child::before {
-            display: none;
-        }
-        
-        .node-dot {
-            position: absolute;
-            left: 0;
-            top: 6px;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #050505;
-            border: 2px solid #06b6d4;
-            box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-        }
-        
-        /* Range Slider */
-        input[type=range] {
-            -webkit-appearance: none;
-            background: transparent;
-        }
-        
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background: #06b6d4;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
-            margin-top: -8px;
-        }
-        
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-        }
-        
-        /* Loading Animation */
-        .loader {
-            width: 48px;
-            height: 48px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: inline-block;
-            position: relative;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-        }
-        
-        .loader::after {
-            content: '';  
-            box-sizing: border-box;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-bottom-color: #06b6d4;
-        }
-        
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Particle Effect */
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        /* Mock Test Styles */
         .test-option {
             transition: all 0.3s ease;
             cursor: pointer;
         }
-        
         .test-option:hover {
             background: rgba(6, 182, 212, 0.1);
             border-color: rgba(6, 182, 212, 0.3);
         }
-        
         .test-option.selected {
             background: rgba(6, 182, 212, 0.2);
             border-color: #06b6d4;
             box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
         }
+        .test-option.correct { background: rgba(16, 185, 129, 0.2); border-color: #10b981; }
+        .test-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
         
-        .test-option.correct {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: #10b981;
-        }
-        
-        .test-option.incorrect {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: #ef4444;
-        }
-        
-        .timer-warning {
-            animation: timerPulse 1s infinite;
-        }
-        
+        .timer-warning { animation: timerPulse 1s infinite; }
         @keyframes timerPulse {
             0%, 100% { color: #ef4444; }
             50% { color: #fbbf24; }
         }
-
+        
         .progress-ring-circle {
             transition: stroke-dashoffset 0.35s;
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
         }
+        
+        .code-editor {
+            background: #1e1e1e;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .stream-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .stream-card:hover { transform: translateY(-5px); border-color: rgba(6, 182, 212, 0.5); }
+        .stream-card.selected {
+            border-color: #06b6d4;
+            background: rgba(6, 182, 212, 0.1);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
+        }
+        
+        .otp-input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5rem;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .otp-input:focus {
+            border-color: #06b6d4;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+            outline: none;
+        }
+        
+        .rank-badge {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+        }
+        
+        .opportunity-card {
+            transition: all 0.3s ease;
+        }
+        .opportunity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(6, 182, 212, 0.2);
+        }
+        
+        .typing-effect::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .file-upload-zone {
+            border: 2px dashed rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+        .file-upload-zone:hover, .file-upload-zone.dragover {
+            border-color: #06b6d4;
+            background: rgba(6, 182, 212, 0.05);
+        }
+        
+        .difficulty-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .difficulty-medium { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+        .difficulty-hard { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .difficulty-expert { background: rgba(168, 85, 247, 0.2); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); }
     </style>
 </head>
 <body class="antialiased">
     <div class="gradient-bg"></div>
-    
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 px-6 py-4">
-        <div class="max-w-7xl mx-auto glass-card rounded-2xl px-6 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center neon-cyan">
-                    <i class="fas fa-atom text-white text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white">SkillSync</h1>
-                    <p class="text-xs text-gray-400 tracking-wider">AI-POWERED MATCHING</p>
-                </div>
-            </div>
-            
-            <div class="hidden md:flex items-center gap-8">
-                <button onclick="switchView('match')" class="nav-item active text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-match">
-                    Matching
-                </button>
-                <button onclick="switchView('candidates')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-candidates">
-                    Talent Pool
-                </button>
-                <button onclick="switchView('projects')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-projects">
-                    Projects
-                </button>
-                <button onclick="switchView('analytics')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-analytics">
-                    Analytics
-                </button>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <!-- Mock Test Button - Top Right -->
-                <button onclick="openMockTest()" class="group relative px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold text-sm hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-300 flex items-center gap-2 overflow-hidden">
-                    <i class="fas fa-clipboard-check"></i>
-                    <span>Mock Test</span>
-                    <div class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></div>
-                </button>
 
-                <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
-                    <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                    <span class="text-xs font-medium text-emerald-400">Fairness Active</span>
+    <!-- Auth Modal (First Time User) -->
+    <div id="auth-modal" class="fixed inset-0 z-[100] flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/95 backdrop-blur-xl"></div>
+        <div class="relative w-full max-w-md p-8">
+            <div class="glass-card rounded-3xl p-8 border border-white/10">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center neon-cyan">
+                        <i class="fas fa-atom text-white text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Welcome to SkillSync</h2>
+                    <p class="text-gray-400 text-sm">Unlock your potential with AI-powered matching</p>
                 </div>
-                <button class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/10">
-                    <i class="fas fa-bell text-gray-400"></i>
-                </button>
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
-                    PBR
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Mock Test Modal -->
-    <div id="mocktest-modal" class="fixed inset-0 z-[60] hidden">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeMockTest()"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl max-h-[90vh] overflow-hidden">
-            <div class="glass-card rounded-3xl border border-white/20 overflow-hidden flex flex-col max-h-[90vh]">
-                <!-- Test Header -->
-                <div class="p-6 border-b border-white/10 flex items-center justify-between bg-gradient-to-r from-gray-900 to-black">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center">
-                            <i class="fas fa-graduation-cap text-white text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-white">Technical Assessment</h3>
-                            <p class="text-sm text-gray-400">Evaluate your skills • 10 Questions • 10 Minutes</p>
+                <!-- Step 1: Basic Info -->
+                <div id="auth-step-1" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
+                        <input type="text" id="user-name" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors" placeholder="Enter your full name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                        <input type="email" id="user-email" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors" placeholder="your@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Mobile Number</label>
+                        <div class="flex gap-2">
+                            <span class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-400 flex items-center">+91</span>
+                            <input type="tel" id="user-mobile" class="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors" placeholder="9876543210" maxlength="10">
                         </div>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <div id="test-timer" class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 font-mono text-lg font-bold text-cyan-400">
-                            10:00
-                        </div>
-                        <button onclick="closeMockTest()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
-                            <i class="fas fa-times text-gray-400"></i>
-                        </button>
-                    </div>
+                    <button onclick="sendOTP()" class="w-full btn-primary py-3 rounded-xl text-white font-semibold mt-6">
+                        Send OTP
+                    </button>
                 </div>
 
-                <!-- Progress Bar -->
-                <div class="w-full h-1 bg-white/10">
-                    <div id="test-progress" class="h-full bg-gradient-to-r from-amber-400 to-orange-600 transition-all duration-300" style="width: 0%"></div>
-                </div>
-
-                <!-- Test Content -->
-                <div id="test-content" class="flex-1 overflow-y-auto p-6">
-                    <!-- Intro Screen -->
-                    <div id="test-intro" class="text-center py-12">
-                        <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-600/20 flex items-center justify-center float">
-                            <i class="fas fa-brain text-4xl text-amber-400"></i>
-                        </div>
-                        <h4 class="text-2xl font-bold text-white mb-4">Ready to Test Your Skills?</h4>
-                        <p class="text-gray-400 max-w-lg mx-auto mb-8">
-                            This assessment covers Python, Machine Learning, Data Structures, and System Design. 
-                            Your results will help us match you with better opportunities.
-                        </p>
-                        <div class="grid grid-cols-2 gap-4 max-w-md mx-auto mb-8">
-                            <div class="glass-card rounded-xl p-4 text-center">
-                                <div class="text-2xl font-bold text-cyan-400">10</div>
-                                <div class="text-xs text-gray-500">Questions</div>
-                            </div>
-                            <div class="glass-card rounded-xl p-4 text-center">
-                                <div class="text-2xl font-bold text-purple-400">10m</div>
-                                <div class="text-xs text-gray-500">Time Limit</div>
-                            </div>
-                        </div>
-                        <button onclick="startTest()" class="btn-primary px-8 py-4 rounded-xl text-white font-bold text-lg">
-                            Start Assessment
-                        </button>
-                    </div>
-
-                    <!-- Question Screen -->
-                    <div id="test-questions" class="hidden space-y-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <span class="text-sm text-gray-400">Question <span id="current-q" class="text-white font-bold">1</span> of 10</span>
-                            <div class="flex gap-2">
-                                <button onclick="prevQuestion()" id="prev-btn" class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-gray-300 transition-colors disabled:opacity-50" disabled>
-                                    <i class="fas fa-chevron-left mr-2"></i>Previous
-                                </button>
-                                <button onclick="nextQuestion()" id="next-btn" class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-gray-300 transition-colors">
-                                    Next<i class="fas fa-chevron-right ml-2"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div id="question-container" class="space-y-6">
-                            <!-- Question rendered here -->
-                        </div>
-
-                        <div class="flex justify-between items-center pt-6 border-t border-white/10">
-                            <button onclick="submitTest()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all">
-                                Submit Test
-                            </button>
-                            <div class="text-sm text-gray-500">
-                                <span id="answered-count">0</span>/10 answered
-                            </div>
+                <!-- Step 2: OTP Verification -->
+                <div id="auth-step-2" class="hidden space-y-6">
+                    <div class="text-center">
+                        <p class="text-gray-400 text-sm mb-2">Enter OTP sent to <span id="otp-phone" class="text-cyan-400"></span></p>
+                        <div class="flex justify-center gap-3">
+                            <input type="text" class="otp-input" maxlength="1" oninput="handleOTPInput(this, 0)" onkeydown="handleOTPKeydown(event, 0)">
+                            <input type="text" class="otp-input" maxlength="1" oninput="handleOTPInput(this, 1)" onkeydown="handleOTPKeydown(event, 1)">
+                            <input type="text" class="otp-input" maxlength="1" oninput="handleOTPInput(this, 2)" onkeydown="handleOTPKeydown(event, 2)">
+                            <input type="text" class="otp-input" maxlength="1" oninput="handleOTPInput(this, 3)" onkeydown="handleOTPKeydown(event, 3)">
                         </div>
                     </div>
-
-                    <!-- Results Screen -->
-                    <div id="test-results" class="hidden py-8">
-                        <div class="text-center mb-8">
-                            <div class="relative w-32 h-32 mx-auto mb-4">
-                                <svg class="w-full h-full transform -rotate-90">
-                                    <circle cx="64" cy="64" r="56" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8"/>
-                                    <circle id="result-ring" cx="64" cy="64" r="56" fill="none" stroke="url(#resultGradient)" stroke-width="8" 
-                                            stroke-dasharray="351.86" stroke-dashoffset="351.86" stroke-linecap="round" class="progress-ring-circle"/>
-                                    <defs>
-                                        <linearGradient id="resultGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" stop-color="#06b6d4" />
-                                            <stop offset="100%" stop-color="#a855f7" />
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span id="result-score" class="text-3xl font-bold text-white">0%</span>
-                                    <span class="text-xs text-gray-400">Score</span>
-                                </div>
-                            </div>
-                            <h4 id="result-title" class="text-2xl font-bold text-white mb-2">Test Completed!</h4>
-                            <p id="result-message" class="text-gray-400">Great effort! Review your answers below.</p>
-                        </div>
-
-                        <div id="results-breakdown" class="space-y-4 max-h-96 overflow-y-auto pr-2">
-                            <!-- Results rendered here -->
-                        </div>
-
-                        <div class="flex justify-center gap-4 mt-8">
-                            <button onclick="retakeTest()" class="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all">
-                                Retake Test
-                            </button>
-                            <button onclick="closeMockTest()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold hover:shadow-lg transition-all">
-                                Back to Dashboard
-                            </button>
-                        </div>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500">Didn't receive? <button onclick="resendOTP()" class="text-cyan-400 hover:text-cyan-300 font-medium">Resend</button></p>
                     </div>
+                    <button onclick="verifyOTP()" class="w-full btn-primary py-3 rounded-xl text-white font-semibold">
+                        Verify & Continue
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <main class="pt-28 pb-12 px-6 max-w-7xl mx-auto">
-        
-        <!-- Header Section -->
-        <div class="mb-10 text-center relative">
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl -z-10"></div>
-            <h2 class="text-5xl font-bold mb-4 bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text text-transparent">
-                Intelligent Matching
-            </h2>
-            <p class="text-gray-400 text-lg max-w-2xl mx-auto">
-                Transparent, weighted competency scoring with bias mitigation and explainable AI
-            </p>
-        </div>
-
-        <!-- Matching View -->
-        <div id="view-match" class="space-y-6">
-            <!-- Control Bar -->
-            <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
-                <div class="flex items-center gap-4">
-                    <div class="relative">
-                        <select id="project-select" onchange="changeProject(this.value)" class="appearance-none bg-black/30 border border-white/10 rounded-xl px-5 py-3 pr-12 text-white focus:outline-none focus:border-cyan-500/50 min-w-[300px]">
-                            <!-- Options populated by JS -->
-                        </select>
-                        <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+    <!-- Onboarding Flow (Post-Login) -->
+    <div id="onboarding-flow" class="hidden fixed inset-0 z-[90] overflow-y-auto">
+        <div class="min-h-screen px-6 py-12 flex flex-col items-center justify-center">
+            
+            <!-- Step 1: Welcome & Resume Upload -->
+            <div id="onboard-step-1" class="w-full max-w-2xl">
+                <div class="text-center mb-12">
+                    <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-600/20 flex items-center justify-center float">
+                        <i class="fas fa-rocket text-4xl text-amber-400"></i>
                     </div>
-                    <button onclick="openWeightsModal()" class="px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium transition-all flex items-center gap-2">
-                        <i class="fas fa-sliders-h text-cyan-400"></i>
-                        Adjust Weights
+                    <h2 class="text-4xl font-bold text-white mb-4">Let's Get Started!</h2>
+                    <p class="text-xl text-gray-400">Take a test to discover your score and unlock job opportunities</p>
+                </div>
+
+                <div class="glass-card rounded-3xl p-8 mb-8">
+                    <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                        <i class="fas fa-cloud-upload-alt text-cyan-400"></i>
+                        Upload Your Resume
+                    </h3>
+                    <div id="upload-zone" class="file-upload-zone rounded-2xl p-12 text-center cursor-pointer" onclick="document.getElementById('resume-input').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                        <input type="file" id="resume-input" class="hidden" accept=".pdf,.doc,.docx" onchange="handleFileSelect(event)">
+                        <div id="upload-content">
+                            <i class="fas fa-file-upload text-5xl text-gray-500 mb-4"></i>
+                            <p class="text-lg text-white font-medium mb-2">Drop your resume here</p>
+                            <p class="text-sm text-gray-500">or click to browse (PDF, DOC, DOCX)</p>
+                        </div>
+                        <div id="upload-success" class="hidden">
+                            <i class="fas fa-check-circle text-5xl text-emerald-400 mb-4"></i>
+                            <p class="text-lg text-white font-medium" id="filename-display">resume.pdf</p>
+                            <button onclick="event.stopPropagation(); resetUpload()" class="mt-2 text-sm text-cyan-400 hover:text-cyan-300">Change file</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <button onclick="goToStep2()" id="continue-btn" class="btn-primary px-12 py-4 rounded-xl text-white font-bold text-lg opacity-50 cursor-not-allowed" disabled>
+                        Continue <i class="fas fa-arrow-right ml-2"></i>
                     </button>
                 </div>
+            </div>
+
+            <!-- Step 2: Stream Selection -->
+            <div id="onboard-step-2" class="w-full max-w-6xl hidden">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-white mb-4">Select Your Stream</h2>
+                    <p class="text-xl text-gray-400">Choose your field to get a personalized assessment</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="streams-grid">
+                    <!-- Streams populated by JS -->
+                </div>
+
+                <div id="path-selection" class="hidden glass-card rounded-3xl p-8 mb-8">
+                    <h3 class="text-xl font-bold text-white mb-6">Select Assessment Path</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="paths-grid">
+                        <!-- Paths populated by JS -->
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <button onclick="goToStep1()" class="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    </button>
+                    <button onclick="startAssessment()" id="start-test-btn" class="btn-primary px-8 py-3 rounded-xl text-white font-bold opacity-50 cursor-not-allowed" disabled>
+                        Start Test <i class="fas fa-play ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Interface -->
+    <div id="test-interface" class="hidden fixed inset-0 z-[80] bg-[#0a0a0a]">
+        <!-- Test Header -->
+        <div class="glass-card border-b border-white/10 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center">
+                    <i class="fas fa-atom text-white"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white" id="test-title">Technical Assessment</h3>
+                    <p class="text-xs text-gray-400" id="test-subtitle">Computer Science & Programming</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10">
+                    <i class="fas fa-clock text-cyan-400"></i>
+                    <span id="test-timer" class="font-mono text-lg font-bold text-cyan-400">45:00</span>
+                </div>
+                <button onclick="confirmExitTest()" class="text-gray-400 hover:text-white transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="w-full h-1 bg-white/10">
+            <div id="test-progress" class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-300" style="width: 0%"></div>
+        </div>
+
+        <!-- Test Content -->
+        <div class="flex h-[calc(100vh-81px)]">
+            <!-- Sidebar -->
+            <div class="w-64 glass-card border-r border-white/10 p-4 overflow-y-auto hidden md:block">
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Questions</p>
+                <div id="question-nav" class="grid grid-cols-5 gap-2">
+                    <!-- Question numbers -->
+                </div>
                 
+                <div class="mt-6 pt-6 border-t border-white/10">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Legend</p>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-cyan-500"></div><span class="text-gray-400">Answered</span></div>
+                        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-white/20"></div><span class="text-gray-400">Unanswered</span></div>
+                        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-amber-500"></div><span class="text-gray-400">Current</span></div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="submitTest()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold hover:shadow-lg transition-all">
+                        Submit Test
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Question Area -->
+            <div class="flex-1 overflow-y-auto p-6 md:p-12">
+                <div id="question-container" class="max-w-4xl mx-auto">
+                    <!-- Questions rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Page -->
+    <div id="results-page" class="hidden min-h-screen pt-24 pb-12 px-6">
+        <div class="max-w-6xl mx-auto">
+            <!-- Score Hero -->
+            <div class="glass-card rounded-3xl p-12 mb-8 text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-cyan-500/10 to-purple-500/10"></div>
+                <div class="relative z-10">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 mb-6">
+                        <i class="fas fa-check-circle text-emerald-400"></i>
+                        <span class="text-emerald-400 font-medium">Test Completed Successfully</span>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-12 mb-8">
+                        <div class="relative">
+                            <svg class="w-48 h-48 transform -rotate-90">
+                                <circle cx="96" cy="96" r="88" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="12"/>
+                                <circle id="score-ring" cx="96" cy="96" r="88" fill="none" stroke="url(#scoreGradient)" stroke-width="12" 
+                                        stroke-dasharray="552.9" stroke-dashoffset="552.9" stroke-linecap="round" class="progress-ring-circle"/>
+                                <defs>
+                                    <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#06b6d4" />
+                                        <stop offset="100%" stop-color="#a855f7" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span id="final-score" class="text-6xl font-bold text-white">0%</span>
+                                <span class="text-gray-400 text-sm mt-1">Score</span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-left">
+                            <div class="rank-badge inline-flex items-center gap-2 px-6 py-3 rounded-2xl mb-4">
+                                <i class="fas fa-trophy text-amber-900"></i>
+                                <span class="text-amber-900 font-bold text-lg">Rank #<span id="user-rank">--</span></span>
+                            </div>
+                            <h2 id="result-title" class="text-3xl font-bold text-white mb-2">Outstanding Performance!</h2>
+                            <p id="result-message" class="text-gray-400 max-w-md">You've demonstrated exceptional skills. Check out your personalized job opportunities below.</p>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+                        <div class="glass-card rounded-xl p-4">
+                            <div class="text-2xl font-bold text-cyan-400" id="mcq-score">0/0</div>
+                            <div class="text-xs text-gray-500 uppercase">MCQ Correct</div>
+                        </div>
+                        <div class="glass-card rounded-xl p-4">
+                            <div class="text-2xl font-bold text-purple-400" id="coding-score">0/0</div>
+                            <div class="text-xs text-gray-500 uppercase">Coding Passed</div>
+                        </div>
+                        <div class="glass-card rounded-xl p-4">
+                            <div class="text-2xl font-bold text-emerald-400" id="accuracy">0%</div>
+                            <div class="text-xs text-gray-500 uppercase">Accuracy</div>
+                        </div>
+                        <div class="glass-card rounded-xl p-4">
+                            <div class="text-2xl font-bold text-pink-400" id="percentile">0th</div>
+                            <div class="text-xs text-gray-500 uppercase">Percentile</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opportunities Section -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                    <i class="fas fa-briefcase text-cyan-400"></i>
+                    Recommended Opportunities
+                </h3>
+                <div id="opportunities-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Opportunities populated by JS -->
+                </div>
+            </div>
+
+            <!-- Detailed Breakdown -->
+            <div class="glass-card rounded-3xl p-8 mb-8">
+                <h3 class="text-xl font-bold text-white mb-6">Detailed Analysis</h3>
+                <div id="detailed-breakdown" class="space-y-4">
+                    <!-- Breakdown populated by JS -->
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-4">
+                <button onclick="retakeTest()" class="px-8 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all">
+                    <i class="fas fa-redo mr-2"></i> Retake Test
+                </button>
+                <button onclick="enterMainApp()" class="btn-primary px-8 py-3 rounded-xl text-white font-bold">
+                    Explore Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (Original SkillSync) -->
+    <div id="main-app" class="hidden">
+        <nav class="fixed top-0 w-full z-50 px-6 py-4">
+            <div class="max-w-7xl mx-auto glass-card rounded-2xl px-6 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <span class="text-sm text-gray-400">Sort by:</span>
-                    <div class="flex bg-black/30 rounded-lg p-1 border border-white/10">
-                        <button onclick="sortMatches('score')" class="sort-btn active px-4 py-1.5 rounded-md text-sm font-medium transition-all bg-white/10 text-white" data-sort="score">
-                            Match Score
-                        </button>
-                        <button onclick="sortMatches('fairness')" class="sort-btn px-4 py-1.5 rounded-md text-sm font-medium text-gray-400 hover:text-white transition-all" data-sort="fairness">
-                            Fairness
-                        </button>
-                        <button onclick="sortMatches('diversity')" class="sort-btn px-4 py-1.5 rounded-md text-sm font-medium text-gray-400 hover:text-white transition-all" data-sort="diversity">
-                            Diversity
-                        </button>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center neon-cyan">
+                        <i class="fas fa-atom text-white text-xl"></i>
                     </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Candidates List -->
-                <div class="lg:col-span-7 space-y-4" id="candidates-list">
-                    <!-- Candidates rendered here -->
-                </div>
-
-                <!-- Detail Panel -->
-                <div class="lg:col-span-5">
-                    <div class="sticky top-28 space-y-4">
-                        <!-- Selected Candidate Detail -->
-                        <div id="detail-panel" class="glass-card rounded-2xl p-6 hidden">
-                            <div class="flex items-start justify-between mb-6">
-                                <div class="flex items-center gap-4">
-                                    <div id="detail-avatar" class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-2xl font-bold text-white neon-cyan">
-                                        --
-                                    </div>
-                                    <div>
-                                        <h3 id="detail-name" class="text-2xl font-bold text-white">--</h3>
-                                        <p id="detail-role" class="text-gray-400">--</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div id="detail-score" class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">
-                                        --
-                                    </div>
-                                    <p class="text-xs text-gray-500 uppercase tracking-wider mt-1">Match Score</p>
-                                </div>
-                            </div>
-
-                            <!-- Score Breakdown -->
-                            <div class="space-y-4 mb-6">
-                                <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Score Breakdown</h4>
-                                <div id="score-breakdown" class="space-y-3">
-                                    <!-- Breakdown bars -->
-                                </div>
-                            </div>
-
-                            <!-- Explanation Flow -->
-                            <div class="space-y-4">
-                                <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Decision Logic</h4>
-                                <div id="explanation-flow" class="space-y-4">
-                                    <!-- Explanation nodes -->
-                                </div>
-                            </div>
-
-                            <!-- Fairness Info -->
-                            <div id="fairness-info" class="mt-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hidden">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <i class="fas fa-shield-alt text-emerald-400"></i>
-                                    <span class="text-sm font-semibold text-emerald-400">Fairness Adjustments Applied</span>
-                                </div>
-                                <ul id="fairness-list" class="space-y-1 text-sm text-emerald-300/80">
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- Empty State -->
-                        <div id="empty-state" class="glass-card rounded-2xl p-12 text-center">
-                            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-white/5 flex items-center justify-center">
-                                <i class="fas fa-user-astronaut text-4xl text-gray-600"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold text-white mb-2">Select a Candidate</h3>
-                            <p class="text-gray-400">Click on any candidate to view detailed matching analysis and explainable AI reasoning.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Candidates View -->
-        <div id="view-candidates" class="hidden space-y-6">
-            <div class="glass-card rounded-2xl p-8">
-                <div class="flex items-center justify-between mb-8">
                     <div>
-                        <h3 class="text-2xl font-bold text-white mb-1">Talent Pool</h3>
-                        <p class="text-gray-400">Browse all candidates and their competency profiles</p>
+                        <h1 class="text-xl font-bold tracking-tight text-white">SkillSync</h1>
+                        <p class="text-xs text-gray-400 tracking-wider">AI-POWERED MATCHING</p>
                     </div>
-                    <div class="flex gap-3">
-                        <input type="text" placeholder="Search skills..." class="px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50">
-                        <button class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-colors">
-                            <i class="fas fa-filter"></i>
+                </div>
+                
+                <div class="hidden md:flex items-center gap-8">
+                    <button onclick="switchView('match')" class="nav-item active text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-match">Matching</button>
+                    <button onclick="switchView('candidates')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-candidates">Talent Pool</button>
+                    <button onclick="switchView('projects')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-projects">Projects</button>
+                    <button onclick="switchView('analytics')" class="nav-item text-sm font-medium text-gray-400 hover:text-white transition-colors" id="nav-analytics">Analytics</button>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
+                        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                        <span class="text-xs font-medium text-emerald-400">Fairness Active</span>
+                    </div>
+                    <button class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/10">
+                        <i class="fas fa-bell text-gray-400"></i>
+                    </button>
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm" id="user-avatar">
+                        ME
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="pt-28 pb-12 px-6 max-w-7xl mx-auto">
+            <div class="mb-10 text-center relative">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl -z-10"></div>
+                <h2 class="text-5xl font-bold mb-4 bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text text-transparent">
+                    Intelligent Matching
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    Transparent, weighted competency scoring with bias mitigation and explainable AI
+                </p>
+            </div>
+
+            <!-- Views -->
+            <div id="view-match" class="space-y-6">
+                <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <select id="project-select" onchange="changeProject(this.value)" class="appearance-none bg-black/30 border border-white/10 rounded-xl px-5 py-3 pr-12 text-white focus:outline-none focus:border-cyan-500/50 min-w-[300px]"></select>
+                            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                        </div>
+                        <button onclick="openWeightsModal()" class="px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium transition-all flex items-center gap-2">
+                            <i class="fas fa-sliders-h text-cyan-400"></i> Adjust Weights
                         </button>
                     </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm text-gray-400">Sort by:</span>
+                        <div class="flex bg-black/30 rounded-lg p-1 border border-white/10">
+                            <button onclick="sortMatches('score')" class="sort-btn active px-4 py-1.5 rounded-md text-sm font-medium transition-all bg-white/10 text-white" data-sort="score">Match Score</button>
+                            <button onclick="sortMatches('fairness')" class="sort-btn px-4 py-1.5 rounded-md text-sm font-medium text-gray-400 hover:text-white transition-all" data-sort="fairness">Fairness</button>
+                            <button onclick="sortMatches('diversity')" class="sort-btn px-4 py-1.5 rounded-md text-sm font-medium text-gray-400 hover:text-white transition-all" data-sort="diversity">Diversity</button>
+                        </div>
+                    </div>
                 </div>
-                <div id="candidates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Grid items -->
-                </div>
-            </div>
-        </div>
 
-        <!-- Projects View -->
-        <div id="view-projects" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="projects-grid">
-                <!-- Project cards -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="lg:col-span-7 space-y-4" id="candidates-list"></div>
+                    <div class="lg:col-span-5">
+                        <div class="sticky top-28 space-y-4">
+                            <div id="detail-panel" class="glass-card rounded-2xl p-6 hidden"></div>
+                            <div id="empty-state" class="glass-card rounded-2xl p-12 text-center">
+                                <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-white/5 flex items-center justify-center">
+                                    <i class="fas fa-user-astronaut text-4xl text-gray-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-white mb-2">Select a Candidate</h3>
+                                <p class="text-gray-400">Click on any candidate to view detailed matching analysis.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Analytics View -->
-        <div id="view-analytics" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-card rounded-2xl p-6 text-center">
-                    <div class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 mb-2">94.2%</div>
-                    <p class="text-gray-400">Average Match Quality</p>
-                </div>
-                <div class="glass-card rounded-2xl p-6 text-center">
-                    <div class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2">0.89</div>
-                    <p class="text-gray-400">Fairness Index</p>
-                </div>
-                <div class="glass-card rounded-2xl p-6 text-center">
-                    <div class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2">2.1s</div>
-                    <p class="text-gray-400">Avg Processing Time</p>
+            <div id="view-candidates" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-1">Talent Pool</h3>
+                            <p class="text-gray-400">Browse all candidates and their competency profiles</p>
+                        </div>
+                    </div>
+                    <div id="candidates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
             </div>
-            
-            <div class="glass-card rounded-2xl p-8">
-                <h3 class="text-xl font-bold text-white mb-6">Matching Algorithm Performance</h3>
-                <div class="h-64 flex items-end justify-around gap-4">
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                        <div class="w-full bg-gradient-to-t from-cyan-500/20 to-cyan-500 rounded-t-lg relative group cursor-pointer" style="height: 75%">
-                            <div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-cyan-400">75%</div>
-                        </div>
-                        <span class="text-xs text-gray-500">Technical</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                        <div class="w-full bg-gradient-to-t from-purple-500/20 to-purple-500 rounded-t-lg relative group cursor-pointer" style="height: 60%">
-                            <div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-purple-400">60%</div>
-                        </div>
-                        <span class="text-xs text-gray-500">Communication</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                        <div class="w-full bg-gradient-to-t from-pink-500/20 to-pink-500 rounded-t-lg relative group cursor-pointer" style="height: 45%">
-                            <div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-pink-400">45%</div>
-                        </div>
-                        <span class="text-xs text-gray-500">Leadership</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                        <div class="w-full bg-gradient-to-t from-emerald-500/20 to-emerald-500 rounded-t-lg relative group cursor-pointer" style="height: 80%">
-                            <div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-emerald-400">80%</div>
-                        </div>
-                        <span class="text-xs text-gray-500">Experience</span>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-    </main>
+            <div id="view-projects" class="hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="projects-grid"></div>
+            </div>
+
+            <div id="view-analytics" class="hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 mb-2">94.2%</div>
+                        <p class="text-gray-400">Average Match Quality</p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2">0.89</div>
+                        <p class="text-gray-400">Fairness Index</p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2">2.1s</div>
+                        <p class="text-gray-400">Avg Processing Time</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <!-- Weights Modal -->
     <div id="weights-modal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeWeightsModal()"></div>
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg">
             <div class="glass-card rounded-3xl p-8 border border-white/20">
-                <div class="flex items-center justify-between mb-8">
-                    <h3 class="text-2xl font-bold text-white">Adjust Scoring Weights</h3>
-                    <button onclick="closeWeightsModal()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
-                        <i class="fas fa-times text-gray-400"></i>
-                    </button>
-                </div>
-                
-                <div class="space-y-8" id="weights-container">
-                    <!-- Weight sliders -->
-                </div>
-                
+                <h3 class="text-2xl font-bold text-white mb-8">Adjust Scoring Weights</h3>
+                <div class="space-y-8" id="weights-container"></div>
                 <div class="mt-8 pt-6 border-t border-white/10 flex justify-end gap-3">
-                    <button onclick="resetWeights()" class="px-6 py-3 rounded-xl text-gray-400 hover:text-white transition-colors">
-                        Reset
-                    </button>
-                    <button onclick="applyWeights()" class="btn-primary px-6 py-3 rounded-xl text-white font-semibold">
-                        Apply Changes
-                    </button>
+                    <button onclick="resetWeights()" class="px-6 py-3 rounded-xl text-gray-400 hover:text-white transition-colors">Reset</button>
+                    <button onclick="applyWeights()" class="btn-primary px-6 py-3 rounded-xl text-white font-semibold">Apply Changes</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Data
-        const candidates = [
+        // Data Structures
+        const streams = [
             {
-                id: 1,
-                name: "Nithin Chen",
-                role: "ML Engineer",
-                avatar: "NC",
-                gradient: "from-cyan-400 to-blue-600",
-                skills: { "Python": 95, "Machine Learning": 94, "Data Analysis": 93, "Communication": 95, "Leadership": 89 },
-                demographics: { gender: "Male", ethnicity: "Asian", socioeconomic: "Medium" },
-                experience: 6,
-                education: "MS Computer Science",
-                projects: 19
+                id: 'cs',
+                name: 'Computer Science & Programming',
+                icon: 'fa-laptop-code',
+                color: 'from-cyan-400 to-blue-600',
+                hasCoding: true,
+                paths: [
+                    { id: 'software-dev', name: 'Software Development', desc: 'Web, Mobile & Application Development' },
+                    { id: 'data-science', name: 'Data Science & ML', desc: 'Machine Learning, AI & Analytics' },
+                    { id: 'systems', name: 'Systems & Infrastructure', desc: 'DevOps, Cloud & Distributed Systems' }
+                ]
             },
             {
-                id: 2,
-                name: "Harsha Johnson",
-                role: "Data Scientist",
-                avatar: "HJ",
-                gradient: "from-purple-400 to-pink-600",
-                skills: { "Python": 88, "Machine Learning": 85, "Data Analysis": 75, "Communication": 90, "Leadership": 80 },
-                demographics: { gender: "Male", ethnicity: "Black", socioeconomic: "Low" },
-                experience: 5,
-                education: "PhD Statistics",
-                projects: 13
+                id: 'electronics',
+                name: 'Electronics & Communication',
+                icon: 'fa-microchip',
+                color: 'from-purple-400 to-pink-600',
+                hasCoding: false,
+                paths: [
+                    { id: 'vlsi', name: 'VLSI Design', desc: 'Chip Design & Semiconductor Technology' },
+                    { id: 'embedded', name: 'Embedded Systems', desc: 'IoT, Robotics & Automation' },
+                    { id: 'telecom', name: 'Telecommunications', desc: '5G, Network Engineering & Wireless' }
+                ]
             },
             {
-                id: 3,
-                name: "Elena Dinesh",
-                role: "AI Researcher",
-                avatar: "ED",
-                gradient: "from-emerald-400 to-cyan-600",
-                skills: { "Python": 98, "Machine Learning": 96, "Data Analysis": 90, "Communication": 82, "Leadership": 80 },
-                demographics: { gender: "Male", ethnicity: "Hispanic", socioeconomic: "Low" },
-                experience: 5,
-                education: "MS AI/ML",
-                projects: 14
+                id: 'mechanical',
+                name: 'Mechanical Engineering',
+                icon: 'fa-cogs',
+                color: 'from-amber-400 to-orange-600',
+                hasCoding: false,
+                paths: [
+                    { id: 'design', name: 'Product Design', desc: 'CAD, CAM & Industrial Design' },
+                    { id: 'manufacturing', name: 'Manufacturing', desc: 'Production, Quality & Operations' },
+                    { id: 'thermal', name: 'Thermal & Fluids', desc: 'HVAC, Automotive & Aerospace' }
+                ]
             },
             {
-                id: 4,
-                name: "Uday David",
-                role: "Software Engineer",
-                avatar: "UD",
-                gradient: "from-amber-400 to-orange-600",
-                skills: { "Python": 75, "Machine Learning": 75, "Data Analysis": 50, "Communication": 68, "Leadership": 25 },
-                demographics: { gender: "Male", ethnicity: "Asian", socioeconomic: "High" },
-                experience: 2,
-                education: "BS Computer Science",
-                projects: 09
+                id: 'civil',
+                name: 'Civil Engineering',
+                icon: 'fa-building',
+                color: 'from-emerald-400 to-teal-600',
+                hasCoding: false,
+                paths: [
+                    { id: 'structural', name: 'Structural Engineering', desc: 'Buildings, Bridges & Infrastructure' },
+                    { id: 'construction', name: 'Construction Management', desc: 'Project Planning & Execution' },
+                    { id: 'environmental', name: 'Environmental', desc: 'Sustainable & Green Engineering' }
+                ]
             },
             {
-                id: 5,
-                name: "Phani Patel",
-                role: "Analytics Lead",
-                avatar: "PP",
-                gradient: "from-rose-400 to-purple-600",
-                skills: { "Python": 90, "Machine Learning": 88, "Data Analysis": 94, "Communication": 95, "Leadership": 90 },
-                demographics: { gender: "Male", ethnicity: "South Asian", socioeconomic: "Medium" },
-                experience: 7,
-                education: "MBA, MS Data Science",
-                projects: 18
+                id: 'business',
+                name: 'Business & Management',
+                icon: 'fa-chart-line',
+                color: 'from-rose-400 to-red-600',
+                hasCoding: false,
+                paths: [
+                    { id: 'marketing', name: 'Marketing & Sales', desc: 'Digital Marketing & Business Development' },
+                    { id: 'finance', name: 'Finance & Consulting', desc: 'Investment Banking & Strategy' },
+                    { id: 'hr', name: 'HR & Operations', desc: 'Talent Management & Operations' }
+                ]
+            },
+            {
+                id: 'design',
+                name: 'Design & Creative',
+                icon: 'fa-palette',
+                color: 'from-indigo-400 to-purple-600',
+                hasCoding: false,
+                paths: [
+                    { id: 'uiux', name: 'UI/UX Design', desc: 'User Experience & Interface Design' },
+                    { id: 'graphic', name: 'Graphic Design', desc: 'Visual Design & Branding' },
+                    { id: 'motion', name: 'Motion & Animation', desc: 'Video, Animation & 3D Design' }
+                ]
             }
         ];
 
-        const projects = [
-            {
-                id: 1,
-                title: "Senior ML Engineer",
-                company: "TechVision AI",
-                description: "Lead machine learning initiatives and mentor junior team members",
-                requirements: { "Python": 90, "Machine Learning": 90, "Data Analysis": 85, "Communication": 80, "Leadership": 75 },
-                weights: { technical: 0.5, communication: 0.2, leadership: 0.2, experience: 0.1 }
+        // Question Banks by Stream & Path
+        const questionBanks = {
+            'cs-software-dev': {
+                mcqs: [
+                    { id: 1, question: "Explain the difference between synchronous and asynchronous programming in JavaScript, including event loop mechanics and when to use each approach.", options: ["Sync blocks thread, async uses callbacks", "Sync is faster, async is slower", "Sync uses single thread, async uses multiple threads", "Sync executes sequentially, async uses event loop for non-blocking operations"], correct: 3, difficulty: 'hard', category: 'JavaScript' },
+                    { id: 2, question: "In a distributed system, how would you handle the Byzantine Generals Problem when consensus is required across nodes with potential failures?", options: ["Use TCP only", "Implement PBFT or Raft consensus", "Increase timeout values", "Use UDP broadcasting"], correct: 1, difficulty: 'expert', category: 'Distributed Systems' },
+                    { id: 3, question: "What is the time and space complexity of the Floyd-Warshall algorithm, and in what scenarios is it preferred over Dijkstra's algorithm?", options: ["O(V²) time, O(V²) space; preferred for sparse graphs", "O(V³) time, O(V²) space; preferred for all-pairs shortest path", "O(E log V) time; preferred for dense graphs", "O(V!) time; preferred for small graphs"], correct: 1, difficulty: 'hard', category: 'Algorithms' },
+                    { id: 4, question: "How does a B-Tree differ from a Binary Search Tree in terms of node structure, and why are B-Trees preferred for database indexing?", options: ["B-Trees have more children, better for disk I/O", "B-Trees are binary, BSTs are not", "BSTs are faster for all operations", "No significant difference"], correct: 0, difficulty: 'hard', category: 'Data Structures' },
+                    { id: 5, question: "Explain the CAP theorem and its implications for designing a globally distributed database system.", options: ["Consistency, Availability, Partition tolerance - pick two", "Computer, Application, Protocol", "Cache, API, Performance", "Concurrent, Atomic, Persistent"], correct: 0, difficulty: 'hard', category: 'System Design' },
+                    { id: 6, question: "What are the memory visibility guarantees provided by the 'volatile' keyword in Java, and how does it interact with the Java Memory Model?", options: ["Prevents caching in registers only", "Ensures atomicity of compound operations", "Guarantees visibility across threads, prevents instruction reordering", "Makes variables immutable"], correct: 2, difficulty: 'expert', category: 'Java' },
+                    { id: 7, question: "In React, explain the difference between useEffect and useLayoutEffect, including when DOM mutations are safe in each.", options: ["useEffect runs after paint, useLayoutEffect before", "useLayoutEffect is deprecated", "useEffect is for state only", "No difference in timing"], correct: 0, difficulty: 'hard', category: 'React' },
+                    { id: 8, question: "How would you design a rate limiter that handles millions of requests per second with distributed architecture?", options: ["Token bucket in single Redis instance", "Sliding window log with consistent hashing", "Fixed window counter only", "Client-side throttling only"], correct: 1, difficulty: 'expert', category: 'System Design' },
+                    { id: 9, question: "What is the difference between database normalization and denormalization, and when would you intentionally denormalize?", options: ["Normalization reduces redundancy; denormalize for read performance", "Denormalization removes all constraints", "Normalization is only for SQL", "Denormalization improves write speed always"], correct: 0, difficulty: 'hard', category: 'Databases' },
+                    { id: 10, question: "Explain how WebAssembly achieves near-native performance and its security model compared to JavaScript.", options: ["Compiled binary format, sandboxed execution environment", "Just-in-time compilation only", "Runs directly on CPU without sandbox", "Interpreted like JavaScript"], correct: 0, difficulty: 'expert', category: 'Web Technologies' }
+                ],
+                coding: [
+                    { id: 1, title: "LRU Cache Implementation", description: "Design and implement a Least Recently Used (LRU) cache with O(1) get and put operations. Handle edge cases including capacity constraints and concurrent access.", difficulty: 'hard', template: "class LRUCache {\n    constructor(capacity) {\n        // Initialize your cache structure here\n    }\n    \n    get(key) {\n        // Return value or -1\n    }\n    \n    put(key, value) {\n        // Update value or insert\n    }\n}" },
+                    { id: 2, title: "Merge K Sorted Arrays", description: "Given k sorted arrays, merge them into a single sorted array. Optimize for both time and space complexity.", difficulty: 'hard', template: "function mergeKSortedArrays(arrays) {\n    // Your implementation here\n    return [];\n}" }
+                ]
             },
-            {
-                id: 2,
-                title: "Data Science Intern",
-                company: "DataFlow Inc",
-                description: "Assist in building predictive models and data pipelines",
-                requirements: { "Python": 80, "Machine Learning": 75, "Data Analysis": 90, "Communication": 70, "Leadership": 60 },
-                weights: { technical: 0.6, communication: 0.2, leadership: 0.1, experience: 0.1 }
+            'cs-data-science': {
+                mcqs: [
+                    { id: 1, question: "Explain the bias-variance decomposition and how it relates to model complexity in gradient boosting machines.", options: ["Trade-off between underfitting and overfitting", "Only affects neural networks", "Refers to data preprocessing", "Memory vs speed trade-off"], correct: 0, difficulty: 'hard', category: 'ML Theory' },
+                    { id: 2, question: "How does backpropagation handle vanishing gradients in deep networks, and what are modern solutions?", options: ["Residual connections, batch normalization, careful initialization", "Simply add more layers", "Use smaller learning rates only", "Vanishing gradients don't exist in modern networks"], correct: 0, difficulty: 'expert', category: 'Deep Learning' },
+                    { id: 3, question: "What is the difference between batch gradient descent, stochastic gradient descent, and mini-batch gradient descent in terms of convergence properties?", options: ["Batch uses full dataset, SGD is noisy but escapes local minima, mini-batch balances both", "SGD is always better", "Batch is faster per iteration", "No difference in final convergence"], correct: 0, difficulty: 'hard', category: 'Optimization' },
+                    { id: 4, question: "Explain how transformer attention mechanisms differ from RNNs in handling long-range dependencies.", options: ["Self-attention provides direct connections, parallelizable", "RNNs are better for long sequences", "Transformers use less memory", "RNNs are parallelizable"], correct: 0, difficulty: 'hard', category: 'NLP' },
+                    { id: 5, question: "In statistical hypothesis testing, explain the difference between Type I and Type II errors and how to control them.", options: ["False positive vs false negative; controlled by significance level and power", "Both are the same", "Type I is worse always", "Controlled only by sample size"], correct: 0, difficulty: 'hard', category: 'Statistics' },
+                    { id: 6, question: "How would you handle imbalanced datasets in a classification problem with 99:1 class distribution?", options: ["SMOTE, class weights, ensemble methods, or appropriate metrics", "Just accuracy metric", "Remove majority class samples", "Imbalance doesn't affect modern algorithms"], correct: 0, difficulty: 'hard', category: 'Data Processing' },
+                    { id: 7, question: "What is the kernel trick in SVMs and how does it enable non-linear classification?", options: ["Maps to higher dimensional space implicitly", "Adds more features manually", "Uses neural networks", "Reduces dimensionality"], correct: 0, difficulty: 'hard', category: 'ML Algorithms' },
+                    { id: 8, question: "Explain the difference between generative and discriminative models with examples.", options: ["Generative models joint distribution P(X,Y), discriminative conditional P(Y|X)", "Discriminative is always better", "Generative requires less data always", "No practical difference"], correct: 0, difficulty: 'hard', category: 'ML Theory' },
+                    { id: 9, question: "How does gradient checkpointing reduce memory usage in training large neural networks?", options: ["Recomputes activations during backward pass", "Reduces batch size", "Uses smaller model", "Compresses gradients"], correct: 0, difficulty: 'expert', category: 'Deep Learning' },
+                    { id: 10, question: "What are the assumptions of linear regression and how would you verify them?", options: ["Linearity, independence, homoscedasticity, normality; residual analysis", "No assumptions needed", "Only normality matters", "Only linearity matters"], correct: 0, difficulty: 'hard', category: 'Statistics' }
+                ],
+                coding: [
+                    { id: 1, title: "Implement Gradient Descent from Scratch", description: "Implement linear regression using gradient descent without using scikit-learn. Include feature normalization and learning rate scheduling.", difficulty: 'hard', template: "import numpy as np\n\nclass LinearRegressionGD:\n    def __init__(self, learning_rate=0.01, epochs=1000):\n        self.lr = learning_rate\n        self.epochs = epochs\n    \n    def fit(self, X, y):\n        # Implement gradient descent\n        pass\n    \n    def predict(self, X):\n        # Return predictions\n        pass" },
+                    { id: 2, title: "K-Means Clustering", description: "Implement the K-Means clustering algorithm from scratch. Include K-means++ initialization and handle empty clusters.", difficulty: 'hard', template: "import numpy as np\n\nclass KMeans:\n    def __init__(self, k=3, max_iters=100):\n        self.k = k\n        self.max_iters = max_iters\n    \n    def fit(self, X):\n        # Implement K-means\n        pass\n    \n    def predict(self, X):\n        # Return cluster assignments\n        pass" }
+                ]
             },
-            {
-                id: 3,
-                title: "AI Product Manager",
-                company: "InnovateLabs",
-                description: "Bridge technical teams and business stakeholders",
-                requirements: { "Python": 70, "Machine Learning": 80, "Data Analysis": 85, "Communication": 95, "Leadership": 90 },
-                weights: { technical: 0.3, communication: 0.4, leadership: 0.2, experience: 0.1 }
+            'electronics-vlsi': {
+                mcqs: [
+                    { id: 1, question: "Explain the differences between synchronous and asynchronous reset in flip-flops regarding metastability and routing.", options: ["Sync reset is clocked, async is immediate; async harder to verify", "Async is always better", "Sync uses more power", "No difference in timing"], correct: 0, difficulty: 'hard', category: 'Digital Design' },
+                    { id: 2, question: "How does clock gating reduce power consumption in CMOS circuits, and what are the timing considerations?", options: ["Stops clock to idle logic; requires enable setup time", "Reduces voltage", "Increases frequency", "Only affects dynamic power"], correct: 0, difficulty: 'hard', category: 'Low Power Design' },
+                    { id: 3, question: "What is the difference between setup time and hold time violations, and how are they fixed?", options: ["Setup: data before clock; Hold: data after clock; fixed by buffering or retiming", "Both are the same", "Only setup matters", "Fixed by increasing voltage"], correct: 0, difficulty: 'hard', category: 'Timing Analysis' },
+                    { id: 4, question: "Explain the working principle of a Phase-Locked Loop (PLL) and its applications in SoC design.", options: ["Feedback system locking output phase to reference; used for clock generation", "Amplifier circuit", "Power regulator", "Memory controller"], correct: 0, difficulty: 'hard', category: 'Analog Design' },
+                    { id: 5, question: "What are the trade-offs between FinFET and planar CMOS technology nodes?", options: ["FinFET better control, lower leakage, higher drive current", "Planar is always better", "FinFET is cheaper", "No significant difference"], correct: 0, difficulty: 'expert', category: 'Semiconductor Physics' },
+                    { id: 6, question: "How does static timing analysis (STA) differ from dynamic simulation in verifying digital circuits?", options: ["STA checks all corners without vectors, simulation needs testbenches", "Simulation is faster", "STA finds all bugs", "Simulation doesn't need vectors"], correct: 0, difficulty: 'hard', category: 'Verification' },
+                    { id: 7, question: "Explain clock domain crossing (CDC) challenges and synchronization techniques.", options: ["Metastability, data loss; use FIFOs, handshake, or synchronizers", "Not a real problem", "Solved by faster clocks", "Only affects power"], correct: 0, difficulty: 'hard', category: 'Design' },
+                    { id: 8, question: "What is the difference between SRAM and DRAM in terms of cell structure, speed, and applications?", options: ["SRAM: 6T, faster, cache; DRAM: 1T+Cap, dense, main memory", "DRAM is faster", "SRAM is denser", "Same structure"], correct: 0, difficulty: 'medium', category: 'Memory' },
+                    { id: 9, question: "How do you optimize a critical path in a digital circuit when synthesis reports negative slack?", options: ["Pipeline, retime, upsize cells, or change architecture", "Increase clock period only", "Add more buffers always", "Reduce voltage"], correct: 0, difficulty: 'hard', category: 'Physical Design' },
+                    { id: 10, question: "Explain electromigration and its impact on interconnect reliability in advanced nodes.", options: ["Electron momentum displaces atoms; limits current density", "Only affects transistors", "Thermal effect only", "Not relevant below 7nm"], correct: 0, difficulty: 'expert', category: 'Reliability' }
+                ],
+                coding: []
             }
+        };
+
+        // Opportunities Database
+        const opportunities = [
+            { id: 1, title: "Senior Software Engineer", company: "Google", type: "Full-time", location: "Bangalore", salary: "₹45-65 LPA", requirements: { minScore: 85, rank: 100 }, tags: ["Java", "System Design", "Cloud"], match: 95 },
+            { id: 2, title: "ML Engineer", company: "Microsoft", type: "Full-time", location: "Hyderabad", salary: "₹40-60 LPA", requirements: { minScore: 80, rank: 200 }, tags: ["Python", "TensorFlow", "Deep Learning"], match: 92 },
+            { id: 3, title: "Product Manager", company: "Flipkart", type: "Full-time", location: "Bangalore", salary: "₹35-50 LPA", requirements: { minScore: 75, rank: 300 }, tags: ["Strategy", "Analytics", "Leadership"], match: 88 },
+            { id: 4, title: "Data Science Intern", company: "Amazon", type: "Internship", location: "Remote", salary: "₹60K/month", requirements: { minScore: 70, rank: 500 }, tags: ["SQL", "Python", "Statistics"], match: 85 },
+            { id: 5, title: "Frontend Developer", company: "Swiggy", type: "Full-time", location: "Bangalore", salary: "₹25-40 LPA", requirements: { minScore: 75, rank: 400 }, tags: ["React", "JavaScript", "CSS"], match: 90 },
+            { id: 6, title: "DevOps Engineer", company: "Netflix", type: "Full-time", location: "Mumbai", salary: "₹30-45 LPA", requirements: { minScore: 80, rank: 250 }, tags: ["AWS", "Kubernetes", "CI/CD"], match: 87 },
+            { id: 7, title: "Research Intern", company: "Adobe", type: "Internship", location: "Noida", salary: "₹50K/month", requirements: { minScore: 65, rank: 800 }, tags: ["Computer Vision", "Python", "Research"], match: 82 },
+            { id: 8, title: "Full Stack Developer", company: "Paytm", type: "Full-time", location: "Delhi", salary: "₹20-35 LPA", requirements: { minScore: 60, rank: 1000 }, tags: ["Node.js", "MongoDB", "React"], match: 78 }
         ];
 
-        // Mock Test Data
-        const testQuestions = [
-            {
-                id: 1,
-                question: "What is the time complexity of accessing an element in a Python dictionary?",
-                options: ["O(1)", "O(n)", "O(log n)", "O(n²)"],
-                correct: 0,
-                category: "Python",
-                explanation: "Python dictionaries use hash tables, providing O(1) average time complexity for lookups."
-            },
-            {
-                id: 2,
-                question: "Which of the following is NOT a valid way to handle missing data in pandas?",
-                options: ["df.dropna()", "df.fillna()", "df.replace_na()", "df.interpolate()"],
-                correct: 2,
-                category: "Data Analysis",
-                explanation: "df.replace_na() is not a valid pandas method. The correct method is df.replace() or fillna()."
-            },
-            {
-                id: 3,
-                question: "What does the 'bias-variance tradeoff' refer to in machine learning?",
-                options: [
-                    "Balancing model complexity vs. training time",
-                    "Balancing underfitting vs. overfitting",
-                    "Balancing precision vs. recall",
-                    "Balancing accuracy vs. speed"
-                ],
-                correct: 1,
-                category: "Machine Learning",
-                explanation: "High bias leads to underfitting, high variance leads to overfitting. The tradeoff is finding the right balance."
-            },
-            {
-                id: 4,
-                question: "In a REST API, which HTTP method is typically used to update an existing resource?",
-                options: ["GET", "POST", "PUT", "DELETE"],
-                correct: 2,
-                category: "System Design",
-                explanation: "PUT is used to update/replace an existing resource, while PATCH is used for partial updates."
-            },
-            {
-                id: 5,
-                question: "What is the primary purpose of gradient descent in neural networks?",
-                options: [
-                    "To initialize weights randomly",
-                    "To minimize the loss function",
-                    "To increase model complexity",
-                    "To prevent overfitting"
-                ],
-                correct: 1,
-                category: "Machine Learning",
-                explanation: "Gradient descent is an optimization algorithm used to minimize the loss function by iteratively updating weights."
-            },
-            {
-                id: 6,
-                question: "Which data structure would be most efficient for implementing a priority queue?",
-                options: ["Array", "Linked List", "Heap", "Stack"],
-                correct: 2,
-                category: "Data Structures",
-                explanation: "Heaps provide O(log n) insertion and extraction of minimum/maximum elements, ideal for priority queues."
-            },
-            {
-                id: 7,
-                question: "What is the difference between supervised and unsupervised learning?",
-                options: [
-                    "Supervised uses labeled data, unsupervised does not",
-                    "Supervised is faster than unsupervised",
-                    "Supervised requires more data",
-                    "There is no difference"
-                ],
-                correct: 0,
-                category: "Machine Learning",
-                explanation: "Supervised learning uses labeled training data with input-output pairs, while unsupervised finds patterns in unlabeled data."
-            },
-            {
-                id: 8,
-                question: "In SQL, which clause is used to filter results after aggregation?",
-                options: ["WHERE", "HAVING", "GROUP BY", "ORDER BY"],
-                correct: 1,
-                category: "Data Analysis",
-                explanation: "HAVING filters results after GROUP BY aggregation, while WHERE filters rows before aggregation."
-            },
-            {
-                id: 9,
-                question: "What is the purpose of regularization in machine learning?",
-                options: [
-                    "To speed up training",
-                    "To prevent overfitting by penalizing complexity",
-                    "To increase model accuracy on training data",
-                    "To reduce the dataset size"
-                ],
-                correct: 1,
-                category: "Machine Learning",
-                explanation: "Regularization (L1/L2) adds penalty terms to the loss function to discourage complex models and prevent overfitting."
-            },
-            {
-                id: 10,
-                question: "Which Python library is primarily used for deep learning?",
-                options: ["Scikit-learn", "Pandas", "TensorFlow", "Matplotlib"],
-                correct: 2,
-                category: "Python",
-                explanation: "TensorFlow (and PyTorch) are the primary libraries for deep learning, while scikit-learn focuses on traditional ML."
-            }
-        ];
-
-        let currentProject = projects[0];
-        let currentWeights = { ...currentProject.weights };
-        let selectedCandidate = null;
-        let matches = [];
-
-        // Mock Test State
+        // Global State
+        let currentUser = null;
+        let selectedStream = null;
+        let selectedPath = null;
+        let currentTest = null;
         let testState = {
             currentQuestion: 0,
             answers: {},
-            timeRemaining: 600,
-            timerInterval: null,
-            isActive: false
+            codingAnswers: {},
+            timeRemaining: 2700,
+            timerInterval: null
         };
 
         // Initialize
         function init() {
-            populateProjectSelect();
-            calculateMatches();
-            renderCandidates();
-            renderProjects();
-            renderCandidatesGrid();
-            renderWeightControls();
+            renderStreams();
+            initMonacoEditor();
         }
 
-        // Mock Test Functions
-        function openMockTest() {
-            document.getElementById('mocktest-modal').classList.remove('hidden');
-            resetTest();
+        // Monaco Editor Initialization
+        function initMonacoEditor() {
+            require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
         }
 
-        function closeMockTest() {
-            if (testState.isActive && !confirm('Are you sure you want to exit? Your progress will be lost.')) {
+        // Auth Functions
+        function sendOTP() {
+            const name = document.getElementById('user-name').value;
+            const email = document.getElementById('user-email').value;
+            const mobile = document.getElementById('user-mobile').value;
+
+            if (!name || !email || !mobile || mobile.length !== 10) {
+                alert('Please fill all fields correctly');
                 return;
             }
-            clearInterval(testState.timerInterval);
-            document.getElementById('mocktest-modal').classList.add('hidden');
+
+            currentUser = { name, email, mobile };
+            document.getElementById('otp-phone').textContent = '+91 ' + mobile;
+            document.getElementById('auth-step-1').classList.add('hidden');
+            document.getElementById('auth-step-2').classList.remove('hidden');
+            
+            // Simulate OTP sent
+            setTimeout(() => {
+                alert('OTP sent to ' + mobile + ' (Demo: Enter 1234)');
+            }, 500);
         }
 
-        function resetTest() {
+        function handleOTPInput(input, index) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value && index < 3) {
+                document.querySelectorAll('.otp-input')[index + 1].focus();
+            }
+        }
+
+        function handleOTPKeydown(e, index) {
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                document.querySelectorAll('.otp-input')[index - 1].focus();
+            }
+        }
+
+        function resendOTP() {
+            alert('OTP resent to ' + currentUser.mobile);
+        }
+
+        function verifyOTP() {
+            const otp = Array.from(document.querySelectorAll('.otp-input')).map(i => i.value).join('');
+            if (otp === '1234' || otp.length === 4) {
+                document.getElementById('auth-modal').classList.add('hidden');
+                document.getElementById('onboarding-flow').classList.remove('hidden');
+                document.getElementById('user-avatar').textContent = currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            } else {
+                alert('Invalid OTP. Try 1234 for demo.');
+            }
+        }
+
+        // Resume Upload
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) processFile(files[0]);
+        }
+
+        function handleFileSelect(e) {
+            if (e.target.files.length) processFile(e.target.files[0]);
+        }
+
+        function processFile(file) {
+            if (!file.name.match(/\.(pdf|doc|docx)$/i)) {
+                alert('Please upload PDF, DOC, or DOCX files only');
+                return;
+            }
+            document.getElementById('upload-content').classList.add('hidden');
+            document.getElementById('upload-success').classList.remove('hidden');
+            document.getElementById('filename-display').textContent = file.name;
+            document.getElementById('continue-btn').disabled = false;
+            document.getElementById('continue-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function resetUpload() {
+            document.getElementById('upload-content').classList.remove('hidden');
+            document.getElementById('upload-success').classList.add('hidden');
+            document.getElementById('resume-input').value = '';
+            document.getElementById('continue-btn').disabled = true;
+            document.getElementById('continue-btn').classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Navigation
+        function goToStep2() {
+            document.getElementById('onboard-step-1').classList.add('hidden');
+            document.getElementById('onboard-step-2').classList.remove('hidden');
+        }
+
+        function goToStep1() {
+            document.getElementById('onboard-step-2').classList.add('hidden');
+            document.getElementById('onboard-step-1').classList.remove('hidden');
+            document.getElementById('path-selection').classList.add('hidden');
+            document.getElementById('start-test-btn').disabled = true;
+            document.getElementById('start-test-btn').classList.add('opacity-50', 'cursor-not-allowed');
+            selectedStream = null;
+            selectedPath = null;
+            document.querySelectorAll('.stream-card').forEach(c => c.classList.remove('selected'));
+        }
+
+        // Stream Selection
+        function renderStreams() {
+            const container = document.getElementById('streams-grid');
+            container.innerHTML = streams.map(s => `
+                <div class="stream-card glass-card rounded-2xl p-6 border border-white/10" onclick="selectStream('${s.id}')">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center mb-4">
+                        <i class="fas ${s.icon} text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">${s.name}</h3>
+                    <p class="text-sm text-gray-400 mb-4">${s.hasCoding ? 'Includes MCQs + Coding' : 'MCQ Assessment Only'}</p>
+                    <div class="flex items-center gap-2 text-xs text-cyan-400">
+                        <span>${s.paths.length} career paths</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectStream(streamId) {
+            selectedStream = streams.find(s => s.id === streamId);
+            
+            document.querySelectorAll('.stream-card').forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            const pathContainer = document.getElementById('paths-grid');
+            pathContainer.innerHTML = selectedStream.paths.map(p => `
+                <div class="glass-card rounded-xl p-5 border border-white/10 cursor-pointer hover:border-cyan-500/50 transition-all" onclick="selectPath('${p.id}', this)">
+                    <h4 class="text-white font-semibold mb-1">${p.name}</h4>
+                    <p class="text-sm text-gray-400">${p.desc}</p>
+                </div>
+            `).join('');
+            
+            document.getElementById('path-selection').classList.remove('hidden');
+            document.getElementById('start-test-btn').disabled = true;
+            document.getElementById('start-test-btn').classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        function selectPath(pathId, element) {
+            selectedPath = selectedStream.paths.find(p => p.id === pathId);
+            
+            document.querySelectorAll('#paths-grid > div').forEach(d => {
+                d.classList.remove('border-cyan-500', 'bg-cyan-500/10');
+                d.classList.add('border-white/10');
+            });
+            element.classList.remove('border-white/10');
+            element.classList.add('border-cyan-500', 'bg-cyan-500/10');
+            
+            document.getElementById('start-test-btn').disabled = false;
+            document.getElementById('start-test-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Start Assessment
+        function startAssessment() {
+            const key = `${selectedStream.id}-${selectedPath.id}`;
+            currentTest = questionBanks[key] || questionBanks['cs-software-dev'];
+            
+            document.getElementById('onboarding-flow').classList.add('hidden');
+            document.getElementById('test-interface').classList.remove('hidden');
+            
+            document.getElementById('test-title').textContent = `${selectedStream.name} Assessment`;
+            document.getElementById('test-subtitle').textContent = selectedPath.name;
+            
             testState = {
                 currentQuestion: 0,
                 answers: {},
-                timeRemaining: 600,
-                timerInterval: null,
-                isActive: false
+                codingAnswers: {},
+                timeRemaining: selectedStream.hasCoding ? 2700 : 1800,
+                timerInterval: null
             };
             
-            document.getElementById('test-intro').classList.remove('hidden');
-            document.getElementById('test-questions').classList.add('hidden');
-            document.getElementById('test-results').classList.add('hidden');
-            document.getElementById('test-timer').textContent = '10:00';
-            document.getElementById('test-timer').classList.remove('timer-warning', 'text-red-400');
-            document.getElementById('test-timer').classList.add('text-cyan-400');
-            document.getElementById('test-progress').style.width = '0%';
-        }
-
-        function startTest() {
-            testState.isActive = true;
-            document.getElementById('test-intro').classList.add('hidden');
-            document.getElementById('test-questions').classList.remove('hidden');
+            renderQuestionNav();
             renderQuestion();
             startTimer();
         }
 
-        function startTimer() {
-            testState.timerInterval = setInterval(() => {
-                testState.timeRemaining--;
-                updateTimerDisplay();
-                
-                if (testState.timeRemaining <= 60) {
-                    document.getElementById('test-timer').classList.add('timer-warning');
-                    document.getElementById('test-timer').classList.remove('text-cyan-400');
-                    document.getElementById('test-timer').classList.add('text-red-400');
-                }
-                
-                if (testState.timeRemaining <= 0) {
-                    submitTest();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(testState.timeRemaining / 60);
-            const seconds = testState.timeRemaining % 60;
-            document.getElementById('test-timer').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        function renderQuestionNav() {
+            const totalQuestions = currentTest.mcqs.length + (currentTest.coding?.length || 0);
+            const nav = document.getElementById('question-nav');
+            nav.innerHTML = Array.from({length: totalQuestions}, (_, i) => `
+                <button onclick="jumpToQuestion(${i})" id="nav-q-${i}" 
+                        class="w-10 h-10 rounded-lg text-sm font-medium transition-all ${i === 0 ? 'bg-amber-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}">
+                    ${i + 1}
+                </button>
+            `).join('');
         }
 
         function renderQuestion() {
-            const q = testQuestions[testState.currentQuestion];
+            const totalMCQs = currentTest.mcqs.length;
+            const totalCoding = currentTest.coding?.length || 0;
+            const isCoding = testState.currentQuestion >= totalMCQs;
+            
             const container = document.getElementById('question-container');
+            const progress = ((testState.currentQuestion + 1) / (totalMCQs + totalCoding)) * 100;
+            document.getElementById('test-progress').style.width = `${progress}%`;
             
-            document.getElementById('current-q').textContent = testState.currentQuestion + 1;
-            document.getElementById('test-progress').style.width = 
-                `${((testState.currentQuestion + 1) / testQuestions.length) * 100}%`;
+            updateQuestionNav();
             
-            const selectedAnswer = testState.answers[q.id];
-            
-            container.innerHTML = `
-                <div class="glass-card rounded-2xl p-6 border border-white/10">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30">
-                            ${q.category}
-                        </span>
-                        <span class="text-xs text-gray-500">Question ${testState.currentQuestion + 1} of ${testQuestions.length}</span>
-                    </div>
-                    <h5 class="text-xl font-semibold text-white mb-6">${q.question}</h5>
-                    <div class="space-y-3">
-                        ${q.options.map((opt, idx) => `
-                            <div onclick="selectAnswer(${q.id}, ${idx})" 
-                                 class="test-option p-4 rounded-xl border border-white/10 bg-white/5 flex items-center gap-4 ${selectedAnswer === idx ? 'selected' : ''}">
-                                <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-sm font-bold text-gray-400">
-                                    ${String.fromCharCode(65 + idx)}
+            if (!isCoding) {
+                const q = currentTest.mcqs[testState.currentQuestion];
+                const selected = testState.answers[q.id];
+                
+                container.innerHTML = `
+                    <div class="glass-card rounded-3xl p-8 border border-white/10">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="difficulty-badge difficulty-${q.difficulty}">${q.difficulty.toUpperCase()}</span>
+                            <span class="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-semibold border border-cyan-500/30">${q.category}</span>
+                            <span class="text-gray-500 text-sm">Question ${testState.currentQuestion + 1} of ${totalMCQs + totalCoding}</span>
+                        </div>
+                        
+                        <h3 class="text-xl font-semibold text-white mb-8 leading-relaxed">${q.question}</h3>
+                        
+                        <div class="space-y-3">
+                            ${q.options.map((opt, idx) => `
+                                <div onclick="selectMCQAnswer(${q.id}, ${idx})" 
+                                     class="test-option p-4 rounded-xl border border-white/10 bg-white/5 flex items-start gap-4 ${selected === idx ? 'selected' : ''}">
+                                    <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-sm font-bold text-gray-400 flex-shrink-0">
+                                        ${String.fromCharCode(65 + idx)}
+                                    </div>
+                                    <span class="text-gray-300 text-sm leading-relaxed">${opt}</span>
                                 </div>
-                                <span class="text-gray-300">${opt}</span>
-                                ${selectedAnswer === idx ? '<i class="fas fa-check-circle text-cyan-400 ml-auto"></i>' : ''}
-                            </div>
-                        `).join('')}
+                            `).join('')}
+                        </div>
                     </div>
-                </div>
-            `;
-            
-            // Update navigation buttons
-            document.getElementById('prev-btn').disabled = testState.currentQuestion === 0;
-            document.getElementById('next-btn').innerHTML = 
-                testState.currentQuestion === testQuestions.length - 1 ? 
-                'Review<i class="fas fa-list ml-2"></i>' : 
-                'Next<i class="fas fa-chevron-right ml-2"></i>';
-            
-            updateAnsweredCount();
+                `;
+            } else {
+                const codingIdx = testState.currentQuestion - totalMCQs;
+                const q = currentTest.coding[codingIdx];
+                const savedCode = testState.codingAnswers[q.id] || q.template;
+                
+                container.innerHTML = `
+                    <div class="glass-card rounded-3xl p-8 border border-white/10">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="difficulty-badge difficulty-hard">CODING</span>
+                            <span class="text-gray-500 text-sm">Question ${testState.currentQuestion + 1} of ${totalMCQs + totalCoding}</span>
+                        </div>
+                        
+                        <h3 class="text-xl font-semibold text-white mb-2">${q.title}</h3>
+                        <p class="text-gray-400 mb-6">${q.description}</p>
+                        
+                        <div class="code-editor p-4">
+                            <textarea id="code-editor" class="w-full h-64 bg-transparent text-gray-300 font-mono text-sm resize-none focus:outline-none" 
+                                      spellcheck="false">${savedCode}</textarea>
+                        </div>
+                        
+                        <div class="flex justify-end mt-4">
+                            <button onclick="saveCode(${q.id})" class="px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 text-sm font-medium hover:bg-cyan-500/30 transition-colors">
+                                <i class="fas fa-save mr-2"></i>Save Code
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
-        function selectAnswer(questionId, optionIdx) {
-            testState.answers[questionId] = optionIdx;
+        function selectMCQAnswer(qid, idx) {
+            testState.answers[qid] = idx;
+            renderQuestion();
+        }
+
+        function saveCode(qid) {
+            const code = document.getElementById('code-editor').value;
+            testState.codingAnswers[qid] = code;
+            alert('Code saved!');
+        }
+
+        function updateQuestionNav() {
+            const total = currentTest.mcqs.length + (currentTest.coding?.length || 0);
+            for (let i = 0; i < total; i++) {
+                const btn = document.getElementById(`nav-q-${i}`);
+                if (i === testState.currentQuestion) {
+                    btn.className = 'w-10 h-10 rounded-lg text-sm font-medium transition-all bg-amber-500 text-white';
+                } else if (i < currentTest.mcqs.length) {
+                    const qid = currentTest.mcqs[i].id;
+                    const answered = testState.answers[qid] !== undefined;
+                    btn.className = `w-10 h-10 rounded-lg text-sm font-medium transition-all ${answered ? 'bg-cyan-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`;
+                } else {
+                    const cid = currentTest.coding[i - currentTest.mcqs.length].id;
+                    const answered = testState.codingAnswers[cid] !== undefined;
+                    btn.className = `w-10 h-10 rounded-lg text-sm font-medium transition-all ${answered ? 'bg-cyan-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`;
+                }
+            }
+        }
+
+        function jumpToQuestion(idx) {
+            testState.currentQuestion = idx;
             renderQuestion();
         }
 
         function nextQuestion() {
-            if (testState.currentQuestion < testQuestions.length - 1) {
+            const total = currentTest.mcqs.length + (currentTest.coding?.length || 0);
+            if (testState.currentQuestion < total - 1) {
                 testState.currentQuestion++;
                 renderQuestion();
-            } else {
-                // Show review or submit
-                if (confirm('You\'ve reached the end. Submit test now?')) {
-                    submitTest();
-                }
             }
         }
 
@@ -1094,493 +1117,388 @@
             }
         }
 
-        function updateAnsweredCount() {
-            const count = Object.keys(testState.answers).length;
-            document.getElementById('answered-count').textContent = count;
+        function startTimer() {
+            updateTimerDisplay();
+            testState.timerInterval = setInterval(() => {
+                testState.timeRemaining--;
+                updateTimerDisplay();
+                
+                if (testState.timeRemaining <= 300) {
+                    document.getElementById('test-timer').classList.add('timer-warning');
+                }
+                
+                if (testState.timeRemaining <= 0) {
+                    submitTest();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(testState.timeRemaining / 60);
+            const secs = testState.timeRemaining % 60;
+            document.getElementById('test-timer').textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function confirmExitTest() {
+            if (confirm('Are you sure you want to exit? Your progress will be lost.')) {
+                clearInterval(testState.timerInterval);
+                document.getElementById('test-interface').classList.add('hidden');
+                document.getElementById('onboarding-flow').classList.remove('hidden');
+            }
         }
 
         function submitTest() {
             clearInterval(testState.timerInterval);
-            testState.isActive = false;
             
-            let correct = 0;
-            const results = testQuestions.map(q => {
-                const userAnswer = testState.answers[q.id];
-                const isCorrect = userAnswer === q.correct;
-                if (isCorrect) correct++;
-                
-                return {
-                    ...q,
-                    userAnswer,
-                    isCorrect
-                };
+            // Calculate scores
+            let mcqCorrect = 0;
+            let mcqTotal = currentTest.mcqs.length;
+            
+            currentTest.mcqs.forEach(q => {
+                if (testState.answers[q.id] === q.correct) mcqCorrect++;
             });
             
-            const score = Math.round((correct / testQuestions.length) * 100);
+            const mcqScore = (mcqCorrect / mcqTotal) * 100;
             
-            showResults(score, correct, results);
+            // Simulate coding evaluation (in real app, this would run test cases)
+            let codingPassed = 0;
+            let codingTotal = currentTest.coding?.length || 0;
+            
+            if (codingTotal > 0) {
+                Object.keys(testState.codingAnswers).forEach((key, idx) => {
+                    // Simulate evaluation - in real app would run against test cases
+                    if (testState.codingAnswers[key] && testState.codingAnswers[key].length > 50) {
+                        codingPassed++;
+                    }
+                });
+            }
+            
+            const codingScore = codingTotal > 0 ? (codingPassed / codingTotal) * 100 : 0;
+            const totalScore = codingTotal > 0 ? (mcqScore * 0.6 + codingScore * 0.4) : mcqScore;
+            
+            // Calculate rank (simulated)
+            const rank = Math.floor(Math.random() * 500) + 1;
+            const percentile = Math.floor(Math.random() * 20) + 80;
+            
+            showResults({
+                totalScore: Math.round(totalScore),
+                mcqCorrect,
+                mcqTotal,
+                codingPassed,
+                codingTotal,
+                accuracy: Math.round((mcqCorrect / mcqTotal) * 100),
+                rank,
+                percentile
+            });
         }
 
-        function showResults(score, correct, results) {
-            document.getElementById('test-questions').classList.add('hidden');
-            document.getElementById('test-results').classList.remove('hidden');
+        function showResults(results) {
+            document.getElementById('test-interface').classList.add('hidden');
+            document.getElementById('results-page').classList.remove('hidden');
             
-            // Animate score ring
-            const circumference = 2 * Math.PI * 56;
-            const offset = circumference - (score / 100) * circumference;
+            // Animate score
+            const circumference = 2 * Math.PI * 88;
+            const offset = circumference - (results.totalScore / 100) * circumference;
             
             setTimeout(() => {
-                document.getElementById('result-ring').style.strokeDashoffset = offset;
+                document.getElementById('score-ring').style.strokeDashoffset = offset;
             }, 100);
             
-            // Animate score number
-            let currentScore = 0;
-            const scoreInterval = setInterval(() => {
-                if (currentScore >= score) {
-                    clearInterval(scoreInterval);
-                    document.getElementById('result-score').textContent = score + '%';
+            // Animate number
+            let current = 0;
+            const interval = setInterval(() => {
+                if (current >= results.totalScore) {
+                    clearInterval(interval);
+                    document.getElementById('final-score').textContent = results.totalScore + '%';
                 } else {
-                    currentScore++;
-                    document.getElementById('result-score').textContent = currentScore + '%';
+                    current++;
+                    document.getElementById('final-score').textContent = current + '%';
                 }
             }, 20);
             
-            // Set result message
+            // Set stats
+            document.getElementById('user-rank').textContent = results.rank;
+            document.getElementById('mcq-score').textContent = `${results.mcqCorrect}/${results.mcqTotal}`;
+            document.getElementById('coding-score').textContent = results.codingTotal > 0 ? `${results.codingPassed}/${results.codingTotal}` : 'N/A';
+            document.getElementById('accuracy').textContent = results.accuracy + '%';
+            document.getElementById('percentile').textContent = results.percentile + 'th';
+            
+            // Set message based on score
             const title = document.getElementById('result-title');
             const message = document.getElementById('result-message');
             
-            if (score >= 80) {
-                title.textContent = 'Outstanding!';
-                message.textContent = `Excellent work! You got ${correct}/10 correct. You're well-qualified for senior technical roles.`;
-                title.className = 'text-2xl font-bold text-emerald-400 mb-2';
-            } else if (score >= 60) {
-                title.textContent = 'Good Job!';
-                message.textContent = `You got ${correct}/10 correct. Solid foundation with room for growth in specific areas.`;
-                title.className = 'text-2xl font-bold text-cyan-400 mb-2';
+            if (results.totalScore >= 85) {
+                title.textContent = 'Outstanding Performance!';
+                title.className = 'text-3xl font-bold text-emerald-400 mb-2';
+                message.textContent = 'Exceptional skills! You are in the top tier of candidates. Premium opportunities await you.';
+            } else if (results.totalScore >= 70) {
+                title.textContent = 'Great Job!';
+                title.className = 'text-3xl font-bold text-cyan-400 mb-2';
+                message.textContent = 'Solid performance! You have strong fundamentals and are ready for challenging roles.';
+            } else if (results.totalScore >= 50) {
+                title.textContent = 'Good Effort!';
+                title.className = 'text-3xl font-bold text-amber-400 mb-2';
+                message.textContent = 'Decent start! Focus on strengthening your weak areas to unlock better opportunities.';
             } else {
                 title.textContent = 'Keep Learning!';
-                message.textContent = `You got ${correct}/10 correct. Review the explanations below to strengthen your skills.`;
-                title.className = 'text-2xl font-bold text-amber-400 mb-2';
+                title.className = 'text-3xl font-bold text-rose-400 mb-2';
+                message.textContent = 'Learning is a journey! Review the concepts and try again to improve your score.';
             }
             
-            // Render breakdown
-            const breakdown = document.getElementById('results-breakdown');
-            breakdown.innerHTML = results.map((r, idx) => `
-                <div class="glass-card rounded-xl p-4 border ${r.isCorrect ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-red-500/30 bg-red-500/5'}">
-                    <div class="flex items-start gap-4">
-                        <div class="w-8 h-8 rounded-lg ${r.isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'} flex items-center justify-center flex-shrink-0">
-                            <i class="fas ${r.isCorrect ? 'fa-check' : 'fa-times'}"></i>
+            // Filter opportunities based on score
+            const eligibleOpps = opportunities.filter(o => results.totalScore >= o.requirements.minScore && results.rank <= o.requirements.rank);
+            
+            document.getElementById('opportunities-grid').innerHTML = eligibleOpps.map(o => `
+                <div class="opportunity-card glass-card rounded-2xl p-6 border border-white/10">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-1">${o.title}</h4>
+                            <p class="text-cyan-400 font-medium">${o.company}</p>
                         </div>
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-xs text-gray-500">Q${idx + 1}</span>
-                                <span class="px-2 py-0.5 rounded bg-white/10 text-xs text-gray-300">${r.category}</span>
+                        <span class="px-3 py-1 rounded-full bg-white/5 text-xs text-gray-300 border border-white/10">${o.type}</span>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                            <i class="fas fa-map-marker-alt text-gray-500"></i> ${o.location}
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                            <i class="fas fa-rupee-sign text-gray-500"></i> ${o.salary}
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${o.tags.map(t => `<span class="px-2 py-1 rounded bg-white/5 text-xs text-gray-400 border border-white/10">${t}</span>`).join('')}
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                            <span class="text-sm text-emerald-400">${o.match}% Match</span>
+                        </div>
+                        <button class="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 text-white text-sm font-medium hover:shadow-lg transition-all">
+                            Apply Now
+                        </button>
+                    </div>
+                </div>
+            `).join('') || '<div class="col-span-full text-center text-gray-500 py-8">Keep improving to unlock more opportunities!</div>';
+            
+            // Detailed breakdown
+            document.getElementById('detailed-breakdown').innerHTML = currentTest.mcqs.map((q, idx) => {
+                const userAns = testState.answers[q.id];
+                const isCorrect = userAns === q.correct;
+                return `
+                    <div class="glass-card rounded-xl p-4 border ${isCorrect ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-red-500/30 bg-red-500/5'}">
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-lg ${isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'} flex items-center justify-center flex-shrink-0">
+                                <i class="fas ${isCorrect ? 'fa-check' : 'fa-times'}"></i>
                             </div>
-                            <p class="text-white text-sm mb-2">${r.question}</p>
-                            <div class="space-y-1 text-sm">
-                                <div class="${r.isCorrect ? 'text-emerald-400' : 'text-red-400'}">
-                                    <span class="text-gray-500">Your answer:</span> 
-                                    ${r.userAnswer !== undefined ? r.options[r.userAnswer] : 'Not answered'}
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs text-gray-500">Q${idx + 1}</span>
+                                    <span class="difficulty-badge difficulty-${q.difficulty}">${q.difficulty}</span>
+                                    <span class="px-2 py-0.5 rounded bg-white/10 text-xs text-gray-400">${q.category}</span>
                                 </div>
-                                ${!r.isCorrect ? `
-                                    <div class="text-emerald-400">
-                                        <span class="text-gray-500">Correct:</span> ${r.options[r.correct]}
-                                    </div>
-                                ` : ''}
-                            </div>
-                            <div class="mt-3 p-3 rounded-lg bg-white/5 border border-white/10">
-                                <p class="text-xs text-gray-400"><i class="fas fa-lightbulb text-amber-400 mr-2"></i>${r.explanation}</p>
+                                <p class="text-white text-sm mb-2">${q.question}</p>
+                                <p class="text-xs ${isCorrect ? 'text-emerald-400' : 'text-red-400'}">
+                                    ${isCorrect ? 'Correct!' : `Your answer: ${userAns !== undefined ? String.fromCharCode(65 + userAns) : 'Not answered'} | Correct: ${String.fromCharCode(65 + q.correct)}`}
+                                </p>
                             </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function retakeTest() {
-            resetTest();
+            document.getElementById('results-page').classList.add('hidden');
+            document.getElementById('onboarding-flow').classList.remove('hidden');
+            goToStep1();
+        }
+
+        function enterMainApp() {
+            document.getElementById('results-page').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            initMainApp();
+        }
+
+        // Main App Functions (Original SkillSync)
+        function initMainApp() {
+            // Initialize with user's data
+            populateProjectSelect();
+            calculateMatches();
+            renderCandidates();
+            renderProjects();
+            renderCandidatesGrid();
         }
 
         function populateProjectSelect() {
             const select = document.getElementById('project-select');
-            select.innerHTML = projects.map(p => 
-                `<option value="${p.id}" ${p.id === currentProject.id ? 'selected' : ''}>${p.title} at ${p.company}</option>`
-            ).join('');
-        }
-
-        function changeProject(projectId) {
-            currentProject = projects.find(p => p.id == projectId);
-            currentWeights = { ...currentProject.weights };
-            selectedCandidate = null;
-            updateDetailPanel();
-            calculateMatches();
-            renderCandidates();
+            const projects = [
+                { id: 1, title: 'Senior Software Engineer', company: 'TechCorp' },
+                { id: 2, title: 'ML Engineer', company: 'DataSystems' },
+                { id: 3, title: 'Product Manager', company: 'InnovateLabs' }
+            ];
+            select.innerHTML = projects.map(p => `<option value="${p.id}">${p.title} at ${p.company}</option>`).join('');
         }
 
         function calculateMatches() {
-            matches = candidates.map(c => {
-                const scores = {
-                    technical: calculateTechnicalScore(c),
-                    communication: c.skills.Communication,
-                    leadership: c.skills.Leadership,
-                    experience: Math.min(100, c.experience * 15)
-                };
-                
-                let rawScore = (
-                    scores.technical * currentWeights.technical +
-                    scores.communication * currentWeights.communication +
-                    scores.leadership * currentWeights.leadership +
-                    scores.experience * currentWeights.experience
-                );
-                
-                // Fairness adjustments
-                let fairnessBonus = 0;
-                const adjustments = [];
-                
-                if (c.demographics.socioeconomic === "Low") {
-                    fairnessBonus += 3;
-                    adjustments.push("Socioeconomic opportunity boost (+3%)");
-                }
-                if (c.demographics.gender === "Female") {
-                    fairnessBonus += 2;
-                    adjustments.push("Gender parity adjustment (+2%)");
-                }
-                
-                const finalScore = Math.min(100, rawScore + fairnessBonus);
-                
-                return {
-                    ...c,
-                    scores,
-                    rawScore,
-                    finalScore,
-                    fairnessBonus,
-                    adjustments,
-                    gaps: calculateGaps(c)
-                };
-            }).sort((a, b) => b.finalScore - a.finalScore);
-        }
-
-        function calculateTechnicalScore(candidate) {
-            let total = 0;
-            let count = 0;
-            for (let skill in currentProject.requirements) {
-                if (skill !== "Communication" && skill !== "Leadership") {
-                    const required = currentProject.requirements[skill];
-                    const actual = candidate.skills[skill] || 0;
-                    total += Math.min(100, (actual / required) * 100);
-                    count++;
-                }
-            }
-            return count > 0 ? total / count : 0;
-        }
-
-        function calculateGaps(candidate) {
-            const gaps = [];
-            for (let skill in currentProject.requirements) {
-                const required = currentProject.requirements[skill];
-                const actual = candidate.skills[skill] || 0;
-                if (actual < required) {
-                    gaps.push({ skill, required, actual, gap: required - actual });
-                }
-            }
-            return gaps.sort((a, b) => b.gap - a.gap);
-        }
-
-        function renderCandidates() {
+            // Simplified matching logic
+            const matches = [
+                { id: 1, name: currentUser.name, role: selectedPath?.name || 'Software Developer', avatar: currentUser.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase(), gradient: 'from-cyan-400 to-purple-600', score: 92, skills: { Technical: 90, Communication: 88, Leadership: 85 } },
+                { id: 2, name: 'Alex Kumar', role: 'Senior Developer', avatar: 'AK', gradient: 'from-purple-400 to-pink-600', score: 88, skills: { Technical: 95, Communication: 82, Leadership: 80 } },
+                { id: 3, name: 'Sarah Chen', role: 'Tech Lead', avatar: 'SC', gradient: 'from-emerald-400 to-cyan-600', score: 94, skills: { Technical: 92, Communication: 95, Leadership: 90 } }
+            ];
+            
             const container = document.getElementById('candidates-list');
-            container.innerHTML = matches.map((match, idx) => `
-                <div onclick="selectCandidate(${match.id})" 
-                     class="glass-card rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:scale-[1.02] ${selectedCandidate?.id === match.id ? 'border-cyan-500/50 bg-cyan-500/5' : ''}">
+            container.innerHTML = matches.map((m, idx) => `
+                <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-cyan-500/50 transition-all" onclick="showCandidateDetail(${m.id})">
                     <div class="flex items-center gap-4">
-                        <div class="relative">
-                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br ${match.gradient} flex items-center justify-center text-lg font-bold text-white shadow-lg">
-                                ${match.avatar}
-                            </div>
-                            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-black border border-white/20 flex items-center justify-center text-xs font-bold text-white">
-                                ${idx + 1}
-                            </div>
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br ${m.gradient} flex items-center justify-center text-lg font-bold text-white">
+                            ${m.avatar}
                         </div>
-                        
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center justify-between mb-1">
-                                <h4 class="text-lg font-bold text-white truncate">${match.name}</h4>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">
-                                        ${match.finalScore.toFixed(1)}%
-                                    </span>
-                                </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="text-lg font-bold text-white">${m.name}</h4>
+                                <span class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">${m.score}%</span>
                             </div>
-                            <p class="text-sm text-gray-400 mb-2">${match.role} • ${match.experience} years</p>
-                            
-                            <div class="flex items-center gap-3">
-                                <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                                    <div class="h-full bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full" style="width: ${match.finalScore}%"></div>
-                                </div>
-                                ${match.adjustments.length > 0 ? `
-                                    <span class="flex-shrink-0 w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Fairness adjusted"></span>
-                                ` : ''}
+                            <p class="text-sm text-gray-400 mb-2">${m.role}</p>
+                            <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full" style="width: ${m.score}%"></div>
                             </div>
-                        </div>
-                        
-                        <div class="hidden sm:block">
-                            <svg class="w-16 h-16 transform -rotate-90">
-                                <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="4"/>
-                                <circle cx="32" cy="32" r="28" fill="none" stroke="url(#gradient)" stroke-width="4" 
-                                        stroke-dasharray="${2 * Math.PI * 28}" 
-                                        stroke-dashoffset="${2 * Math.PI * 28 * (1 - match.finalScore/100)}"
-                                        class="score-ring-circle"/>
-                                <defs>
-                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stop-color="#06b6d4" />
-                                        <stop offset="100%" stop-color="#a855f7" />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function selectCandidate(id) {
-            selectedCandidate = matches.find(m => m.id === id);
-            updateDetailPanel();
-            renderCandidates(); // Re-render to update selection state
+        function showCandidateDetail(id) {
+            const panel = document.getElementById('detail-panel');
+            const empty = document.getElementById('empty-state');
+            
+            panel.innerHTML = `
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center text-2xl font-bold text-white mb-4">
+                        ${currentUser.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
+                    </div>
+                    <h3 class="text-2xl font-bold text-white">${currentUser.name}</h3>
+                    <p class="text-cyan-400">${selectedPath?.name || 'Software Developer'}</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-400">Technical Skills</span>
+                            <span class="text-white">90%</span>
+                        </div>
+                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-cyan-400 rounded-full" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-400">Problem Solving</span>
+                            <span class="text-white">88%</span>
+                        </div>
+                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-purple-400 rounded-full" style="width: 88%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-400">Communication</span>
+                            <span class="text-white">85%</span>
+                        </div>
+                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-pink-400 rounded-full" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 pt-6 border-t border-white/10">
+                    <button class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold">
+                        View Full Profile
+                    </button>
+                </div>
+            `;
+            
+            panel.classList.remove('hidden');
+            empty.classList.add('hidden');
         }
 
-        function updateDetailPanel() {
-            const detailPanel = document.getElementById('detail-panel');
-            const emptyState = document.getElementById('empty-state');
-            
-            if (!selectedCandidate) {
-                detailPanel.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            
-            detailPanel.classList.remove('hidden');
-            emptyState.classList.add('hidden');
-            
-            // Update header
-            document.getElementById('detail-avatar').className = `w-16 h-16 rounded-2xl bg-gradient-to-br ${selectedCandidate.gradient} flex items-center justify-center text-2xl font-bold text-white neon-cyan`;
-            document.getElementById('detail-avatar').textContent = selectedCandidate.avatar;
-            document.getElementById('detail-name').textContent = selectedCandidate.name;
-            document.getElementById('detail-role').textContent = `${selectedCandidate.role} • ${selectedCandidate.education}`;
-            document.getElementById('detail-score').textContent = selectedCandidate.finalScore.toFixed(1) + '%';
-            
-            // Score breakdown
-            const breakdownHtml = `
-                <div class="space-y-3">
-                    <div>
-                        <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-400">Technical Competency</span>
-                            <span class="text-white font-medium">${selectedCandidate.scores.technical.toFixed(1)}%</span>
-                        </div>
-                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div class="skill-fill h-full bg-gradient-to-r from-cyan-400 to-cyan-600 rounded-full" style="width: ${selectedCandidate.scores.technical}%"></div>
+        function renderProjects() {
+            document.getElementById('projects-grid').innerHTML = `
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-2">Google - L4 Software Engineer</h3>
+                    <p class="text-gray-400 mb-4">Build next-generation search features</p>
+                    <div class="flex gap-2">
+                        <span class="px-3 py-1 rounded-full bg-white/5 text-xs text-gray-300">Go</span>
+                        <span class="px-3 py-1 rounded-full bg-white/5 text-xs text-gray-300">Distributed Systems</span>
+                    </div>
+                </div>
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-2">Microsoft - Senior SDE</h3>
+                    <p class="text-gray-400 mb-4">Azure cloud infrastructure team</p>
+                    <div class="flex gap-2">
+                        <span class="px-3 py-1 rounded-full bg-white/5 text-xs text-gray-300">C#</span>
+                        <span class="px-3 py-1 rounded-full bg-white/5 text-xs text-gray-300">Cloud</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCandidatesGrid() {
+            document.getElementById('candidates-grid').innerHTML = `
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-white font-bold">RK</div>
+                        <div>
+                            <h4 class="font-bold text-white">Rahul Kumar</h4>
+                            <p class="text-sm text-gray-400">Backend Developer</p>
                         </div>
                     </div>
-                    <div>
-                        <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-400">Communication</span>
-                            <span class="text-white font-medium">${selectedCandidate.scores.communication}%</span>
+                    <div class="grid grid-cols-2 gap-2 text-center">
+                        <div class="bg-white/5 rounded-lg p-2">
+                            <div class="text-xs text-gray-500">Java</div>
+                            <div class="text-sm font-bold text-cyan-400">95%</div>
                         </div>
-                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div class="skill-fill h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full" style="width: ${selectedCandidate.scores.communication}%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-400">Leadership</span>
-                            <span class="text-white font-medium">${selectedCandidate.scores.leadership}%</span>
-                        </div>
-                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div class="skill-fill h-full bg-gradient-to-r from-pink-400 to-pink-600 rounded-full" style="width: ${selectedCandidate.scores.leadership}%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-400">Experience</span>
-                            <span class="text-white font-medium">${selectedCandidate.scores.experience.toFixed(1)}%</span>
-                        </div>
-                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div class="skill-fill h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full" style="width: ${selectedCandidate.scores.experience}%"></div>
+                        <div class="bg-white/5 rounded-lg p-2">
+                            <div class="text-xs text-gray-500">Spring</div>
+                            <div class="text-sm font-bold text-cyan-400">90%</div>
                         </div>
                     </div>
                 </div>
             `;
-            document.getElementById('score-breakdown').innerHTML = breakdownHtml;
-            
-            // Explanation flow
-            const explanationHtml = selectedCandidate.gaps.map(gap => `
-                <div class="explanation-node">
-                    <div class="node-dot"></div>
-                    <div class="bg-white/5 rounded-xl p-4 border border-white/10">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-sm font-medium text-amber-400">Skill Gap Identified</span>
-                            <span class="text-xs text-gray-500">${gap.skill}</span>
-                        </div>
-                        <p class="text-sm text-gray-300">
-                            Required: <span class="text-white font-medium">${gap.required}%</span> • 
-                            Actual: <span class="text-white font-medium">${gap.actual}%</span>
-                        </p>
-                        <div class="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
-                            <div class="h-full bg-amber-500 rounded-full" style="width: ${(gap.actual/gap.required)*100}%"></div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            document.getElementById('explanation-flow').innerHTML = explanationHtml || 
-                '<div class="text-gray-500 text-sm italic">No significant skill gaps identified</div>';
-            
-            // Fairness info
-            const fairnessInfo = document.getElementById('fairness-info');
-            if (selectedCandidate.adjustments.length > 0) {
-                fairnessInfo.classList.remove('hidden');
-                document.getElementById('fairness-list').innerHTML = selectedCandidate.adjustments.map(adj => 
-                    `<li class="flex items-center gap-2"><i class="fas fa-check text-xs"></i>${adj}</li>`
-                ).join('');
-            } else {
-                fairnessInfo.classList.add('hidden');
-            }
-        }
-
-        function sortMatches(criteria) {
-            document.querySelectorAll('.sort-btn').forEach(btn => {
-                btn.classList.remove('active', 'bg-white/10', 'text-white');
-                btn.classList.add('text-gray-400');
-            });
-            document.querySelector(`[data-sort="${criteria}"]`).classList.add('active', 'bg-white/10', 'text-white');
-            document.querySelector(`[data-sort="${criteria}"]`).classList.remove('text-gray-400');
-            
-            if (criteria === 'score') {
-                matches.sort((a, b) => b.finalScore - a.finalScore);
-            } else if (criteria === 'fairness') {
-                matches.sort((a, b) => b.adjustments.length - a.adjustments.length);
-            } else if (criteria === 'diversity') {
-                matches.sort((a, b) => Math.random() - 0.5);
-            }
-            renderCandidates();
         }
 
         function switchView(view) {
             document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
             document.getElementById(`view-${view}`).classList.remove('hidden');
-            
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(`nav-${view}`).classList.add('active');
         }
 
         function openWeightsModal() {
             document.getElementById('weights-modal').classList.remove('hidden');
-            renderWeightControls();
         }
 
         function closeWeightsModal() {
             document.getElementById('weights-modal').classList.add('hidden');
         }
 
-        function renderWeightControls() {
-            const container = document.getElementById('weights-container');
-            const weights = [
-                { key: 'technical', label: 'Technical Skills', color: 'cyan', value: currentWeights.technical },
-                { key: 'communication', label: 'Communication', color: 'purple', value: currentWeights.communication },
-                { key: 'leadership', label: 'Leadership', color: 'pink', value: currentWeights.leadership },
-                { key: 'experience', label: 'Experience', color: 'emerald', value: currentWeights.experience }
-            ];
-            
-            container.innerHTML = weights.map(w => `
-                <div>
-                    <div class="flex justify-between items-center mb-3">
-                        <label class="text-white font-medium">${w.label}</label>
-                        <span class="text-${w.color}-400 font-bold" id="weight-val-${w.key}">${(w.value * 100).toFixed(0)}%</span>
-                    </div>
-                    <input type="range" min="0" max="100" value="${w.value * 100}" 
-                           class="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
-                           oninput="updateWeightPreview('${w.key}', this.value)">
-                    <div class="mt-2 h-1 bg-${w.color}-500/20 rounded-full overflow-hidden">
-                        <div id="weight-bar-${w.key}" class="h-full bg-${w.color}-500 transition-all duration-300" style="width: ${w.value * 100}%"></div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function updateWeightPreview(key, value) {
-            document.getElementById(`weight-val-${key}`).textContent = value + '%';
-            document.getElementById(`weight-bar-${key}`).style.width = value + '%';
+        function resetWeights() {
+            closeWeightsModal();
         }
 
         function applyWeights() {
-            ['technical', 'communication', 'leadership', 'experience'].forEach(key => {
-                const val = document.getElementById(`weight-val-${key}`).textContent;
-                currentWeights[key] = parseInt(val) / 100;
-            });
             closeWeightsModal();
-            calculateMatches();
-            renderCandidates();
-            if (selectedCandidate) {
-                selectedCandidate = matches.find(m => m.id === selectedCandidate.id);
-                updateDetailPanel();
-            }
         }
 
-        function resetWeights() {
-            currentWeights = { ...currentProject.weights };
-            renderWeightControls();
+        function sortMatches(criteria) {
+            document.querySelectorAll('.sort-btn').forEach(b => {
+                b.classList.remove('active', 'bg-white/10', 'text-white');
+                b.classList.add('text-gray-400');
+            });
+            event.target.classList.add('active', 'bg-white/10', 'text-white');
+            event.target.classList.remove('text-gray-400');
         }
 
-        function renderProjects() {
-            const container = document.getElementById('projects-grid');
-            container.innerHTML = projects.map(p => `
-                <div class="glass-card rounded-2xl p-6 hover:border-purple-500/30 transition-all cursor-pointer group" onclick="changeProject(${p.id}); switchView('match');">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h3 class="text-xl font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">${p.title}</h3>
-                            <p class="text-gray-400 text-sm">${p.company}</p>
-                        </div>
-                        <span class="px-3 py-1 rounded-full bg-white/5 text-xs text-gray-300 border border-white/10">Active</span>
-                    </div>
-                    <p class="text-gray-400 text-sm mb-6">${p.description}</p>
-                    <div class="space-y-3">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-500">Technical Weight</span>
-                            <span class="text-cyan-400">${(p.weights.technical * 100).toFixed(0)}%</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-500">Communication</span>
-                            <span class="text-purple-400">${(p.weights.communication * 100).toFixed(0)}%</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderCandidatesGrid() {
-            const container = document.getElementById('candidates-grid');
-            container.innerHTML = candidates.map(c => `
-                <div class="glass-card rounded-2xl p-5 hover:scale-[1.02] transition-transform">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br ${c.gradient} flex items-center justify-center text-white font-bold">
-                            ${c.avatar}
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-white">${c.name}</h4>
-                            <p class="text-sm text-gray-400">${c.role}</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        ${Object.entries(c.skills).slice(0, 4).map(([skill, level]) => `
-                            <div class="bg-white/5 rounded-lg p-2 text-center">
-                                <div class="text-xs text-gray-500 mb-1">${skill}</div>
-                                <div class="text-sm font-bold text-cyan-400">${level}%</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Initialize app
+        // Initialize
         init();
     </script>
 </body>
